@@ -25,6 +25,23 @@
       this.trigger = document.querySelector("#booklet-trigger");
       this.experience = document.querySelector("#experience");
       this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      this.historyOwned = false;
+      /* A reload must still start at the headphones notice, not inside a modal. */
+      if (history.state?.twoOfUsBooklet) {
+        const state = { ...history.state };
+        delete state.twoOfUsBooklet;
+        history.replaceState(state, "");
+      }
+      window.addEventListener("popstate", () => {
+        if (this.dialog.open && !history.state?.twoOfUsBooklet) {
+          this.historyOwned = false;
+          this.close(true);
+        } else if (!this.dialog.open && history.state?.twoOfUsBooklet) {
+          const state = { ...history.state };
+          delete state.twoOfUsBooklet;
+          history.replaceState(state, "");
+        }
+      });
       this.previous.addEventListener("click", () => this.turn(-1));
       this.next.addEventListener("click", () => this.turn(1));
       document.querySelector("#booklet-close").addEventListener("click", () => this.close());
@@ -65,6 +82,9 @@
       this.openTimer = setTimeout(() => {
         this.render();
         this.dialog.showModal();
+        /* Back dismisses the reader without leaving the album. */
+        history.pushState({ ...history.state, twoOfUsBooklet: true }, "");
+        this.historyOwned = true;
         this.experience.classList.add("is-reading");
         this.experience.classList.remove("is-extracting");
         const target = this.shell.getBoundingClientRect();
@@ -81,9 +101,11 @@
         }, this.reducedMotion.matches ? 0 : 1160);
       }, this.reducedMotion.matches ? 0 : 300);
     }
-    close() {
+    close(fromHistory = false) {
       if (!this.dialog.open || this.closing) return;
       this.closing = true;
+      if (!fromHistory && this.historyOwned && history.state?.twoOfUsBooklet) history.back();
+      this.historyOwned = false;
       this.busy = true;
       clearTimeout(this.animationTimer);
       clearTimeout(this.turnTimer);

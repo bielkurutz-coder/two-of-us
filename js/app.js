@@ -43,11 +43,12 @@
     discButton.setAttribute("aria-label", player.isPlaying ? "Pausar álbum" : "Reproduzir álbum");
     discButton.setAttribute("aria-busy", String(player.pending));
     document.querySelector("#disc-error").textContent = player.error;
+    experience.classList.toggle("has-disc-error", Boolean(player.error));
     if (!player.loaded) return;
     const state = player.error ? "ÁUDIO INDISPONÍVEL" : player.pending ? "PREPARANDO O SOM" : player.isPlaying ? "O DISCO ESTÁ GIRANDO" : player.finished ? "FIM DO ÁLBUM" : "EM PAUSA";
     document.querySelector("#disc-time").textContent = `${window.formatTime(player.audio.currentTime)} / ${window.formatTime(player.duration)}`;
     document.querySelector("#disc-progress-fill").style.width = `${player.duration ? Math.min(100, player.audio.currentTime / player.duration * 100) : 0}%`;
-    const announcement = `${state}. ${player.track.title}.`;
+    const announcement = `${state}. ${player.track?.title || ""}.`;
     if (announcement !== lastAnnouncement) { announcer.textContent = announcement; lastAnnouncement = announcement; }
   });
   const bonusPlayer = new window.AlbumPlayer(document.querySelector("#bonus-audio"), [data.bonusTrack], () => booklet?.updatePlayer());
@@ -86,4 +87,8 @@
   });
   /* Pause when navigating away; no persisted or automatic playback on a later visit. */
   window.addEventListener("pagehide", () => { discPlayer.pause(); bonusPlayer.pause(); });
+  /* Refresh controls after the browser resumes a suspended/locked tab. */
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) { discPlayer.emit(); bonusPlayer.emit(); }
+  });
 })();

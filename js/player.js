@@ -23,7 +23,8 @@
       });
       audio.addEventListener("ended", () => {
         if (this.index < this.tracks.length - 1) {
-          this.load(this.index + 1);
+          this.index += 1;
+          this.loaded = false;
           this.play();
         } else {
           this.finished = true;
@@ -34,10 +35,11 @@
     }
     get track() { return this.tracks[this.index]; }
     get isPlaying() { return !this.audio.paused && !this.audio.ended && !this.audio.error; }
-    get duration() { return Number.isFinite(this.audio.duration) ? this.audio.duration : this.track.durationHint || 0; }
+    get duration() { return Number.isFinite(this.audio.duration) ? this.audio.duration : this.track?.durationHint || 0; }
     get canSeek() { return Number.isFinite(this.audio.duration) && this.audio.duration > 0; }
     emit() { if (this.onChange) this.onChange(this); }
     load(index) {
+      if (!this.tracks[index]?.file) throw new Error("Missing audio source");
       this.index = index;
       this.finished = false;
       this.error = "";
@@ -47,14 +49,14 @@
       this.emit();
     }
     async play() {
-      this.onBeforePlay();
-      if (!this.loaded || this.audio.error) this.load(this.index);
-      if (this.finished) this.load(0);
       const request = ++this.request;
       this.pending = true;
       this.error = "";
-      this.emit();
       try {
+        this.onBeforePlay();
+        if (!this.loaded || this.audio.error) this.load(this.index);
+        if (this.finished) this.load(0);
+        this.emit();
         await this.audio.play();
       } catch (error) {
         if (request !== this.request || error.name === "AbortError") return;
