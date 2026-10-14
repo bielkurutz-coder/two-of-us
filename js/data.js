@@ -9,7 +9,7 @@ window.ALBUM_DATA = {
     disc: "assets/img/disc-label.jpg",
     pageBackground: "assets/img/page-paper.png",
     backInlay: "assets/img/back-inlay.png",
-    bonusArtwork: "assets/img/cover.png"
+    bonusArtwork: "assets/img/bonus-art.jpg"
   },
   /* Public tracks only. The bonus object is appended by the player, exactly once. */
   tracks: [

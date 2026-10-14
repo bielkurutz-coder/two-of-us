@@ -125,6 +125,7 @@
     }
     render() {
       const definition = this.pages[this.index];
+      this.dialog.classList.toggle("is-bonus-page", definition.type === "bonus");
       const fragment = document.createDocumentFragment();
       fragment.append(element("p", "page-eyebrow", definition.eyebrow), element("h2", "page-title", definition.title));
       if (definition.text) fragment.append(element("p", "page-copy", definition.text));

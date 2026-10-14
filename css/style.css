@@ -119,6 +119,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .signature { font: italic 19px Georgia, serif; margin-top: 30px; color: #7b4f36; }
 .page-navigation { display: flex; justify-content: space-between; align-items: center; color: #e5dbc3; margin-top: 26px; }
 .page-navigation .icon-button { border-color: #e5dbc340; }
+.is-bonus-page .page-navigation #page-prev, .is-bonus-page .page-navigation #page-next { visibility: hidden; }
 #page-counter { font-size: 10px; letter-spacing: 3px; font-variant-numeric: tabular-nums; }
 .reader-hint { font-size: 9px; color: #bcb69d; letter-spacing: .4px; text-align: center; margin: 15px 0 0; }
 .reader-cover { position: absolute; inset: 0; z-index: 4; transform-origin: left center; backface-visibility: hidden; -webkit-backface-visibility: hidden; pointer-events: none; }
