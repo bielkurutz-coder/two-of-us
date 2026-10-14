@@ -10,7 +10,7 @@
     constructor(data, bonusPlayer) {
       this.data = data;
       this.player = bonusPlayer;
-      this.pages = [...data.booklet.pages, { ...data.booklet.bonusPage, type: "bonus" }];
+      this.pages = [...data.booklet.pages.filter(page => page.enabled !== false), { ...data.booklet.bonusPage, type: "bonus" }];
       this.index = 0;
       this.busy = false;
       this.closing = false;

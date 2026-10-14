@@ -82,6 +82,8 @@ two-of-us-v04/
 
 Todo o conteúdo do álbum está em **`js/data.js`**:
 
+Para reativar a página de fotos, troque `enabled: false` por `enabled: true` (ou remova a flag) na entrada `type: "photos"` de `booklet.pages`.
+
 | Campo | O que você altera |
 | --- | --- |
 | `title`, `artist`, `subtitle` | Nome do álbum, artista e subtítulo |
