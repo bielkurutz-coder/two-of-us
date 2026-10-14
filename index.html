@@ -9,11 +9,11 @@
   <meta name="description" content="Uma experiência interativa de álbum em CD.">
   <title>Two Of Us — álbum interativo</title>
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=20261014-v08">
-  <script defer src="js/data.js?v=20261014-v08"></script>
+  <link rel="stylesheet" href="css/style.css?v=20261014-v09">
+  <script defer src="js/data.js?v=20261014-v09"></script>
   <script defer src="js/player.js?v=20261014-v08"></script>
   <script defer src="js/booklet.js?v=20261014-v08-scroll"></script>
-  <script defer src="js/app.js?v=20261014-v08"></script>
+  <script defer src="js/app.js?v=20261014-v09"></script>
 </head>
 <body class="headphones-pending">
   <section id="headphones-gate" class="headphones-gate" aria-labelledby="headphones-title" aria-describedby="headphones-copy">
@@ -33,7 +33,7 @@
   <main class="experience" id="experience" inert aria-hidden="true">
     <header class="album-heading open-only" aria-hidden="true">
       <div class="eyebrow"><span>VOL. 01</span></div>
-      <h1 id="album-title"><img id="album-logo" class="album-logo" alt="Two Of Us" draggable="false"></h1>
+      <h1 id="album-title"><button id="polaroid-trigger" type="button" aria-label="Ver detalhes do disco" aria-haspopup="dialog" aria-controls="polaroid-dialog" tabindex="-1" disabled><img id="album-logo" class="album-logo" alt="Two Of Us" draggable="false"></button></h1>
       <p id="album-subtitle"></p>
     </header>
 
@@ -83,6 +83,16 @@
     </section>
     <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
   </main>
+
+  <dialog id="polaroid-dialog" class="polaroid-dialog" aria-label="Detalhes do disco" aria-describedby="polaroid-notes">
+    <div class="polaroid-stage">
+      <div class="polaroid-print">
+        <div class="polaroid-photo"><img id="polaroid-photo" alt="Fotografia do disco" draggable="false" hidden></div>
+        <div class="polaroid-notes" id="polaroid-notes"></div>
+      </div>
+      <button id="polaroid-close" class="polaroid-close" type="button" aria-label="Fechar detalhes do disco" autofocus>×</button>
+    </div>
+  </dialog>
 
   <dialog id="booklet-dialog" class="booklet-dialog" aria-labelledby="booklet-label">
     <div class="reader-layout">

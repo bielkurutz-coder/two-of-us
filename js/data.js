@@ -11,6 +11,14 @@ window.ALBUM_DATA = {
     backInlay: "assets/img/back-inlay.png",
     bonusArtwork: "assets/img/bonus-art.jpg"
   },
+  polaroid: {
+    photo: null,
+    notes: [
+      "Gravado em: maio a setembro de 2026",
+      "Lançado em: 13 de outubro de 2026",
+      "Compositores: Gabriel K & Ana Paula"
+    ]
+  },
   /* Public tracks only. The bonus object is appended by the player, exactly once. */
   tracks: [
     { id: "track-01", title: "Master Of None", file: "assets/audio/01-master-of-none.mp3", durationHint: 199, artist: "Beach House", description: "Conheci essa graças a você, e é o sample de The Party & The After Party, do Abel. Uma música noturna e distante, abafada. Como o amanhecer depois de uma festa." },
