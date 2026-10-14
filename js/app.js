@@ -10,6 +10,25 @@
   let booklet;
   let lastAnnouncement = "";
   let caseBusy = false;
+  const headphonesGate = document.querySelector("#headphones-gate");
+  const headphonesContinue = document.querySelector("#headphones-continue");
+  let headphonesAccepted = false;
+  /* Register the first user gesture before playback controls become reachable.
+     Actual audio.play() calls stay inside the existing, later playback taps. */
+  headphonesContinue.addEventListener("click", () => {
+    if (headphonesAccepted) return;
+    headphonesAccepted = true;
+    headphonesContinue.disabled = true;
+    headphonesGate.classList.add("is-dismissed");
+    document.body.classList.remove("headphones-pending");
+    const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400;
+    setTimeout(() => {
+      headphonesGate.hidden = true;
+      experience.inert = false;
+      experience.removeAttribute("aria-hidden");
+      openButton.focus({ preventScroll: true });
+    }, delay);
+  });
   document.title = `${data.title} — álbum interativo`;
   document.querySelector("#album-subtitle").textContent = data.subtitle;
   const imageBindings = { "album-logo": "logo", "cover-art": "cover", "booklet-art": "cover", "reader-cover-art": "cover", "disc-art": "disc", "back-inlay": "backInlay" };
@@ -56,7 +75,7 @@
   openButton.addEventListener("click", () => setCase(true));
   document.querySelector("#case-close").addEventListener("click", () => setCase(false));
   discButton.addEventListener("click", () => {
-    if (caseBusy) return;
+    if (caseBusy || !headphonesAccepted) return;
     experience.classList.add("hints-dismissed");
     discPlayer.toggle();
   });

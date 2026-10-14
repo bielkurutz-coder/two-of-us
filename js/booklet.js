@@ -163,7 +163,8 @@
       } else if (definition.type === "bonus") {
         fragment.append(element("p", "page-copy", this.data.bonusTrack.description));
         const player = document.querySelector("#bonus-player-template").content.cloneNode(true);
-        player.querySelector(".bonus-art").src = this.data.images.bonusArtwork;
+        const artwork = player.querySelector(".bonus-art");
+        if (artwork) artwork.src = this.data.images.bonusArtwork;
         player.querySelector(".bonus-title").textContent = this.data.bonusTrack.title;
         player.querySelector(".bonus-artist").textContent = this.data.bonusTrack.artist;
         player.querySelector(".bonus-toggle").addEventListener("click", () => this.player.toggle());
@@ -189,6 +190,7 @@
       const player = this.player;
       const toggle = panel.querySelector(".bonus-toggle");
       toggle.classList.toggle("is-playing", player.isPlaying);
+      panel.classList.toggle("is-playing", player.isPlaying);
       toggle.setAttribute("aria-pressed", String(player.isPlaying));
       toggle.setAttribute("aria-label", player.isPlaying ? "Pausar faixa extra" : "Reproduzir faixa extra");
       toggle.setAttribute("aria-busy", String(player.pending));

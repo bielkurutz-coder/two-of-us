@@ -78,7 +78,6 @@ window.ALBUM_DATA = {
       { type: "tracks", eyebrow: "AS CANÇÕES · FAIXAS 28–30", title: "As\ncanções", trackIds: ["track-28", "track-29", "track-30"] },
       { type: "tracks", eyebrow: "AS CANÇÕES · FAIXAS 31–33", title: "As\ncanções", trackIds: ["track-31", "track-32", "track-33"] },
       { type: "photos", eyebrow: "FRAGMENTOS DO CAMINHO", title: "Entre\ninstantes", photoIds: ["photo-01", "photo-02"], text: "[Texto provisório] Fotos, lembranças e pequenos registros que acompanham as canções." },
-      { type: "credits", eyebrow: "QUEM FEZ PARTE", title: "Muitas mãos,\num disco", text: "[Texto provisório] Este álbum existe por causa destas pessoas." },
       { type: "note", eyebrow: "UMA NOTA DO ARTISTA", title: "Antes de\nfechar", paragraphs: ["[Texto provisório] Use esta página para uma carta, uma dedicatória ou uma lembrança sobre o álbum.", "[Texto provisório] Você poderá trocar todos os textos e definir a quantidade de páginas nas próximas fases."], signature: "[Assinatura do artista]" }
     ],
     bonusPage: { eyebrow: "VOCÊ CHEGOU ATÉ AQUI", title: "Ainda\nhá música." }
