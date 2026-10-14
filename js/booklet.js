@@ -137,7 +137,7 @@
           const track = this.data.tracks[position];
           const item = element("li", "track-item");
           const copy = element("div");
-          copy.append(element("h3", "", track.title), element("p", "", track.description));
+          copy.append(element("h3", "", track.title), element("p", "track-artist", track.artist), element("p", "", track.description));
           item.append(element("span", "track-number", String(position + 1).padStart(2, "0")), copy);
           list.append(item);
         });
@@ -165,7 +165,7 @@
         const player = document.querySelector("#bonus-player-template").content.cloneNode(true);
         player.querySelector(".bonus-art").src = this.data.images.bonusArtwork;
         player.querySelector(".bonus-title").textContent = this.data.bonusTrack.title;
-        player.querySelector(".bonus-artist").textContent = this.data.artist;
+        player.querySelector(".bonus-artist").textContent = this.data.bonusTrack.artist;
         player.querySelector(".bonus-toggle").addEventListener("click", () => this.player.toggle());
         player.querySelector(".bonus-previous").addEventListener("click", () => this.player.restart());
         player.querySelector(".bonus-next").addEventListener("click", () => this.player.restart());
