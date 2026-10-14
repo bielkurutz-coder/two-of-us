@@ -54,13 +54,14 @@
       this.page.addEventListener("pointerdown", event => {
         this.gesture = null;
         if (!event.isPrimary || event.target.closest("button, input, a")) return;
-        this.gesture = { x: event.clientX, y: event.clientY, pointer: event.pointerId, at: Date.now() };
+        this.gesture = { x: event.clientX, y: event.clientY, pointer: event.pointerId, at: Date.now(), scrollTop: this.page.scrollTop };
         this.page.setPointerCapture(event.pointerId);
       });
       this.page.addEventListener("pointerup", event => {
         const start = this.gesture;
         this.gesture = null;
-        if (!start || start.pointer !== event.pointerId) return;
+        if (this.page.hasPointerCapture(event.pointerId)) this.page.releasePointerCapture(event.pointerId);
+        if (!start || start.pointer !== event.pointerId || Math.abs(this.page.scrollTop - start.scrollTop) > 2) return;
         const dx = event.clientX - start.x;
         const dy = event.clientY - start.y;
         if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
@@ -73,6 +74,8 @@
         }
       });
       this.page.addEventListener("pointercancel", () => { this.gesture = null; });
+      this.page.addEventListener("scroll", () => { this.gesture = null; }, { passive: true });
+      this.page.addEventListener("lostpointercapture", () => { this.gesture = null; });
     }
     open() {
       if (this.busy || this.dialog.open) return;
