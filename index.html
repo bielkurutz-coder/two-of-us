@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#272b20">
+  <meta name="description" content="Uma experiência interativa de álbum em CD.">
+  <title>Two Of Us — álbum interativo</title>
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css?v=20261013-v04">
+  <script defer src="js/data.js?v=20261013-v04"></script>
+  <script defer src="js/player.js?v=20261013-v04"></script>
+  <script defer src="js/booklet.js?v=20261013-v04"></script>
+  <script defer src="js/app.js?v=20261013-v04"></script>
+</head>
+<body>
+  <main class="experience" id="experience">
+    <header class="album-heading open-only" aria-hidden="true">
+      <div class="eyebrow"><span>VOL. 01</span></div>
+      <h1 id="album-title"><img id="album-logo" class="album-logo" alt="Two Of Us" draggable="false"></h1>
+      <p id="album-subtitle"></p>
+    </header>
+
+    <section class="case-stage" aria-label="Estojo do álbum">
+      <div class="jewel-case" id="jewel-case">
+        <div class="case-base">
+          <img class="back-inlay" id="back-inlay" alt="Encarte traseiro provisório" draggable="false">
+          <div class="tray-groove"></div>
+          <button class="disc" id="disc" type="button" tabindex="-1" aria-hidden="true" aria-label="Reproduzir álbum" aria-pressed="false">
+            <span class="disc-rotation" id="disc-rotation"><img id="disc-art" alt="" draggable="false"></span>
+            <span class="disc-sheen"></span><span class="disc-hole"></span>
+          </button>
+          <span class="tray-hub"></span>
+        </div>
+        <div class="case-lid" id="case-lid">
+          <div class="lid-face lid-front">
+            <img id="cover-art" alt="Capa do álbum Two Of Us" draggable="false">
+            <span class="plastic-shine"></span>
+          </div>
+          <div class="lid-face lid-inner">
+            <button class="booklet-in-case" id="booklet-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Retirar e abrir o livreto">
+              <img id="booklet-art" alt="" draggable="false">
+              <span class="booklet-edge"></span>
+            </button>
+            <span class="case-clip clip-top"></span><span class="case-clip clip-bottom"></span>
+          </div>
+        </div>
+        <span class="case-spine"></span>
+        <button class="case-open-hit" id="case-open" type="button" aria-label="Abrir estojo do álbum"></button>
+      </div>
+    </section>
+
+    <section class="listening-panel open-only" id="listening-panel" hidden aria-label="Reprodução do álbum">
+      <div class="tap-hints" aria-hidden="true">
+        <svg class="tap-hint" viewBox="0 0 120 80" fill="none" focusable="false">
+          <path d="M91 68C77 72 66 63 62 53S57 34 61 22L59 7M49 19L59 7 69 20"/>
+          <path class="sketch-echo" d="M88 71C75 70 64 63 60 51M57 9L51 18"/>
+        </svg>
+        <svg class="tap-hint" viewBox="0 0 120 80" fill="none" focusable="false">
+          <path d="M29 70C43 73 55 61 57 50S54 31 58 21L60 7M48 18L60 7 68 21"/>
+          <path class="sketch-echo" d="M32 73C43 72 55 63 59 52M62 9L69 20"/>
+        </svg>
+      </div>
+      <div class="disc-progress" aria-hidden="true"><span id="disc-progress-fill"></span></div>
+      <div class="session-footer"><span id="disc-time">00:00</span><button id="case-close" class="case-close-control" type="button" aria-label="Fechar estojo"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
+      <p id="disc-error" class="sr-only" role="status"></p>
+    </section>
+    <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
+  </main>
+
+  <dialog id="booklet-dialog" class="booklet-dialog" aria-labelledby="booklet-label">
+    <div class="reader-layout">
+      <div class="reader-heading"><span id="booklet-label">ENTRE AS PÁGINAS</span><button class="icon-button reader-close" id="booklet-close" type="button" aria-label="Guardar livreto">×</button></div>
+      <div class="book-shell" id="book-shell">
+        <div class="page-underlay"></div>
+        <article class="book-page" id="book-page" tabindex="-1"></article>
+        <div class="turning-leaf" id="turning-leaf" aria-hidden="true" hidden></div>
+        <div class="reader-cover" id="reader-cover"><img id="reader-cover-art" alt="" draggable="false"></div>
+      </div>
+      <nav class="page-navigation" aria-label="Navegação do livreto">
+        <button class="icon-button" id="page-prev" type="button" aria-label="Página anterior">←</button>
+        <span id="page-counter" aria-live="polite"></span>
+        <button class="icon-button" id="page-next" type="button" aria-label="Próxima página">→</button>
+      </nav>
+      <p class="reader-hint">Deslize ou toque nas bordas para virar.</p>
+    </div>
+  </dialog>
+
+  <template id="bonus-player-template">
+    <section class="bonus-player" aria-label="Player da faixa extra">
+      <div class="bonus-identity"><img class="bonus-art" alt="Arte provisória da faixa extra"><div><p class="player-kicker">UMA ÚLTIMA CANÇÃO</p><h3 class="bonus-title"></h3><p class="bonus-artist"></p></div></div>
+      <div class="bonus-controls">
+        <button class="icon-button bonus-previous" type="button" aria-label="Anterior: reiniciar faixa extra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M18 5l-10 7 10 7z"/></svg></button>
+        <button class="bonus-toggle" type="button" aria-label="Reproduzir faixa extra" aria-pressed="false"><span class="play-icon" aria-hidden="true">▶</span><span class="pause-icon" aria-hidden="true">Ⅱ</span></button>
+        <button class="icon-button bonus-next" type="button" aria-label="Próxima: repetir única faixa extra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M6 5l10 7-10 7z"/></svg></button>
+      </div>
+      <label class="sr-only" for="bonus-seek">Posição da faixa extra</label>
+      <input id="bonus-seek" class="bonus-seek" type="range" min="0" max="100" value="0" step="0.1" disabled>
+      <div class="bonus-times"><span class="bonus-elapsed">00:00</span><span class="bonus-duration">00:00</span></div>
+      <p class="bonus-error error-message" role="status"></p>
+    </section>
+  </template>
+  <audio id="disc-audio" preload="none"></audio>
+  <audio id="bonus-audio" preload="none"></audio>
+  <noscript><p class="noscript-message">Ative o JavaScript para abrir o estojo e explorar o álbum.</p></noscript>
+</body>
+</html>
