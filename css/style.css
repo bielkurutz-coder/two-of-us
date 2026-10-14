@@ -21,7 +21,8 @@
   --environment-text: var(--ink);
   --subtitle-text: var(--ink);
   --subtitle-opacity: .85;
-  --notice-surface: var(--paper);
+  --notice-surface: var(--object-book-page-background-color);
+  --notice-color-scheme: only light;
   --notice-image: var(--page-background);
   --notice-text: var(--olive);
   --notice-copy: #625a44;
@@ -47,7 +48,6 @@
   --print-mark: #6c5c40;
   --print-caption: #705b3c;
   --object-polaroid-paper: #f6f2e9;
-  --object-polaroid-wash: #f6f2e9d9;
   --object-polaroid-ink: #3a3029;
   --object-polaroid-film: #373c34;
   --object-polaroid-border: #d0c8b388;
@@ -91,7 +91,9 @@
   --object-page-underlay-background: #b8ae90;
   --object-page-underlay-border: 1px solid #7e765e;
   --object-page-underlay-box-shadow: 1px 2px 0 #d6ccb0;
-  --object-book-page-background-color: #efe5cd;
+  --object-book-page-background-color: #f6e7c8;
+  --paper-grain-opacity: .2;
+  --paper-grain-filter: grayscale(1) brightness(.56) contrast(5) brightness(1.8);
   --object-book-page-box-shadow: inset 8px 0 15px -12px #4b392cbb;
   --object-book-page-scrollbar-color: #b9a785 transparent;
   --object-page-copy-color: #625a44;
@@ -103,6 +105,7 @@
   --object-bonus-player-filter: drop-shadow(1px 5px 4px #58432830);
   --object-bonus-player-after-background: #b88c4433;
   --object-bonus-player-after-border: 1px solid #ab85451a;
+  --object-bonus-label-paper: #ebdbc4f5;
   --object-bonus-identity-color: #493b29;
   --object-bonus-artist-color: #675037;
   --object-bonus-reel-rim-fill: #b3a079;
@@ -112,7 +115,8 @@
   --object-bonus-reel-center-fill: #514734;
   --object-bonus-reel-center-stroke: #eadbb8;
   --object-bonus-controls-icon-button-border: 1px solid #8b8165;
-  --object-bonus-controls-icon-button-background: linear-gradient(#f3ead5, #d4c6a6);
+  --object-bonus-controls-icon-button-surface: #f3ead5;
+  --object-bonus-controls-icon-button-background: linear-gradient(transparent, #8b72384d);
   --object-bonus-controls-icon-button-box-shadow: inset 0 1px #fff9, 0 3px 0 #a69776, 0 4px 4px #5f4e2926;
   --object-bonus-controls-button-active-box-shadow: inset 0 1px 3px #75633c40, 0 1px 0 #a69776;
   --seek-rail: #464d3133;
@@ -139,8 +143,14 @@ button { -webkit-user-select: none; user-select: none; }
 .headphones-gate {
   position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; overflow-y: auto;
   padding: max(32px, env(safe-area-inset-top)) 28px max(32px, env(safe-area-inset-bottom));
-  background: var(--notice-surface) var(--notice-image) center / cover; color: var(--notice-text);
+  isolation: isolate; color-scheme: var(--notice-color-scheme);
+  background-color: var(--notice-surface); color: var(--notice-text);
   opacity: 1; transition: opacity .4s ease;
+}
+.headphones-gate::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--notice-image) center / cover; opacity: var(--paper-grain-opacity);
+  mix-blend-mode: multiply; filter: var(--paper-grain-filter);
 }
 .headphones-gate.is-dismissed { opacity: 0; pointer-events: none; }
 .headphones-notice { width: min(100%, 310px); text-align: center; }
@@ -223,11 +233,22 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .reader-heading { display: flex; align-items: center; justify-content: space-between; color: var(--reader-heading); margin: 0 0 17px; font-size: 9px; letter-spacing: 2px; }
 .icon-button { min-width: 46px; height: 46px; border: 1px solid currentColor; border-radius: 50%; background: transparent; display: inline-flex; justify-content: center; align-items: center; font-size: 23px; }
 .reader-close { border-color: var(--reader-close-border); font-size: 28px; }
-.book-shell { position: relative; perspective: 1300px; width: 100%; height: min(62vh, 525px); height: min(62svh, 525px); min-height: 390px;  }
+.book-shell { --book-page-height: max(390px, min(62vh, 525px)); position: relative; perspective: 1300px; width: 100%; height: min(62vh, 525px); height: min(62svh, 525px); min-height: 390px;  }
+@supports (height: 1svh) { .book-shell { --book-page-height: max(390px, min(62svh, 525px)); } }
 /* Keep the static stack shadow out of the moving 3D subtree. */
 .book-shell::before { content: ""; position: absolute; inset: 0; box-shadow: var(--object-book-shell-shadow); pointer-events: none; }
 .page-underlay { position: absolute; inset: 3px -4px -5px 3px; background: var(--object-page-underlay-background); border: var(--object-page-underlay-border); transform: rotate(.8deg); box-shadow: var(--object-page-underlay-box-shadow); }
-.book-page { font-family: 'Caveat', cursive; font-size: 17px; font-weight: 400; line-height: 1.45; color: var(--object-page-ink); position: absolute; inset: 0; background-color: var(--object-book-page-background-color); background-image: var(--page-background); background-size: cover; border-radius: 1px 4px 4px 1px; padding: 30px 26px 34px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; box-shadow: var(--object-book-page-box-shadow); scrollbar-width: thin; scrollbar-color: var(--object-book-page-scrollbar-color); }
+.book-page { font-family: 'Caveat', cursive; font-size: 17px; font-weight: 400; line-height: 1.45; color: var(--object-page-ink); position: absolute; inset: 0; background-color: var(--object-book-page-background-color); isolation: isolate; border-radius: 1px 4px 4px 1px; padding: 30px 26px 34px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; box-shadow: var(--object-book-page-box-shadow); scrollbar-width: thin; scrollbar-color: var(--object-book-page-scrollbar-color); }
+/* The base can darken with the ink if a browser ignores only light.
+   Grain never supplies the paper color; its filter is static, not animated.
+   A zero-flow sticky layer keeps the texture behind long, scrolling pages. */
+.book-page::before {
+  content: ""; display: block; position: sticky; top: -30px; z-index: -1; pointer-events: none;
+  height: var(--book-page-height);
+  margin: -30px -26px calc(30px - var(--book-page-height));
+  background: var(--page-background) center / cover; opacity: var(--paper-grain-opacity);
+  mix-blend-mode: multiply; filter: var(--paper-grain-filter);
+}
 /* Printed handwriting keeps the same ink in either environment theme. */
 .page-eyebrow { font-size: 14px; line-height: 1.35; font-weight: 600; margin: 0 0 18px; color: var(--print-secondary); }
 .page-title { font: 700 clamp(35px, 10.5vw, 45px)/1.08 'Caveat', cursive; white-space: pre-line; margin: 0 0 24px; transform: rotate(-2deg); }
@@ -281,15 +302,19 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .turning-leaf.is-crossfading { transform: none; transform-style: flat; will-change: opacity; }
 .turning-leaf.is-crossfading .book-page { overflow: hidden; }
 .bonus-player { font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: normal; position: relative; isolation: isolate; color: var(--ink); padding: 12px 10px 13px; margin: 25px 3px 8px; transform: rotate(-2deg); filter: var(--object-bonus-player-filter); }
-.bonus-player::before {
-  content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
-  background: var(--paper) var(--page-background) center / cover;
+.bonus-player::before, .bonus-player::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
   clip-path: polygon(1% 1%, 8% 0, 15% 1.2%, 24% .2%, 32% 1%, 43% 0, 54% .8%, 62% .2%, 72% 1%, 83% 0, 91% 1%, 99% .4%, 98.8% 12%, 100% 23%, 99% 35%, 99.7% 48%, 98.8% 60%, 100% 73%, 99% 86%, 99.5% 99%, 90% 98.7%, 81% 100%, 70% 99%, 60% 99.7%, 49% 98.7%, 38% 100%, 26% 99%, 15% 99.8%, 6% 98.8%, .5% 99.5%, 1.2% 88%, 0 78%, 1% 67%, .2% 54%, 1% 42%, 0 29%, 1.2% 17%);
 }
-.bonus-player::after { content: ""; position: absolute; top: -5px; right: 12px; width: 54px; height: 19px; background: var(--object-bonus-player-after-background); border: var(--object-bonus-player-after-border); transform: rotate(13deg); clip-path: polygon(2% 0, 100% 4%, 97% 100%, 0 96%); pointer-events: none; }
+.bonus-player::before { z-index: -2; background-color: var(--object-book-page-background-color); }
+.bonus-player::after {
+  z-index: -1; background: var(--page-background) center / cover;
+  opacity: var(--paper-grain-opacity); mix-blend-mode: multiply; filter: var(--paper-grain-filter);
+}
+.bonus-cassette::after { content: ""; position: absolute; top: -17px; right: 2px; width: 54px; height: 19px; background: var(--object-bonus-player-after-background); border: var(--object-bonus-player-after-border); transform: rotate(13deg); clip-path: polygon(2% 0, 100% 4%, 97% 100%, 0 96%); pointer-events: none; }
 .bonus-cassette { position: relative; width: 100%; }
 .bonus-cassette-body { width: 100%; height: auto; }
-.bonus-identity { position: absolute; top: 13%; left: 10%; width: 80%; height: 22%; display: flex; flex-direction: column; justify-content: center; text-align: center; color: var(--object-bonus-identity-color); font-family: 'Caveat', cursive; }
+.bonus-identity { position: absolute; top: 13%; left: 10%; width: 80%; height: 22%; display: flex; flex-direction: column; justify-content: center; text-align: center; background-color: var(--object-bonus-label-paper); color: var(--object-bonus-identity-color); font-family: 'Caveat', cursive; }
 .bonus-title { font-size: clamp(12px, 3.8vw, 17px); font-weight: 600; font-style: normal; line-height: 1.05; margin: 0; }
 .bonus-artist { font-size: clamp(11px, 3vw, 13px); line-height: 1.1; color: var(--object-bonus-artist-color); margin: 2px 0 0; }
 .bonus-reel { position: absolute; top: 49.2%; width: 11%; height: auto; aspect-ratio: 1; margin: -5.5% 0 0 -5.5%; animation: spin 4s linear infinite; animation-play-state: paused; pointer-events: none; }
@@ -299,7 +324,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .bonus-reel-center { fill: var(--object-bonus-reel-center-fill); stroke: var(--object-bonus-reel-center-stroke); stroke-width: 3; }
 .bonus-player.is-playing .bonus-reel { animation-play-state: running; }
 .bonus-controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 8px 0 0; }
-.bonus-controls .icon-button, .bonus-toggle { min-width: 44px; width: 48px; height: 44px; padding: 0; border: var(--object-bonus-controls-icon-button-border); border-radius: 3px; background: var(--object-bonus-controls-icon-button-background); color: var(--olive); box-shadow: var(--object-bonus-controls-icon-button-box-shadow); }
+.bonus-controls .icon-button, .bonus-toggle { min-width: 44px; width: 48px; height: 44px; padding: 0; border: var(--object-bonus-controls-icon-button-border); border-radius: 3px; background-color: var(--object-bonus-controls-icon-button-surface); background-image: var(--object-bonus-controls-icon-button-background); color: var(--olive); box-shadow: var(--object-bonus-controls-icon-button-box-shadow); }
 .bonus-controls button:active, .bonus-toggle.is-playing { transform: translateY(2px); box-shadow: var(--object-bonus-controls-button-active-box-shadow); }
 .bonus-controls svg { width: 19px; height: 19px; fill: currentColor; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
 .bonus-toggle { font-size: 20px; }
@@ -345,6 +370,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
     --subtitle-text: #d0c6ac;
     --subtitle-opacity: 1;
     --notice-surface: #2c3023;
+    --notice-color-scheme: light dark;
     --notice-image: none;
     --notice-text: var(--paper);
     --notice-copy: var(--paper);
@@ -366,7 +392,8 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
   }
 }
 /* These are physical printed objects, even in a dark environment. */
-.jewel-case, .book-shell, .album-logo { color-scheme: only light; }
+.jewel-case, .book-shell, .book-page, .turning-leaf, .leaf-face, .page-underlay,
+.bonus-player, .bonus-identity, .photo-slot, .polaroid-print, .album-logo { color-scheme: only light; }
 .book-shell { --focus-ring: #a86631; }
 .experience.has-disc-error { min-height: 680px; }
 @media (max-height: 620px) and (orientation: portrait) {
@@ -392,11 +419,14 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 }
 .polaroid-stage { position: relative; flex: 0 0 auto; width: min(78vw, 320px); margin: auto; }
 .polaroid-print {
-  position: relative; width: 100%; aspect-ratio: 88 / 107; color-scheme: only light;
+  position: relative; isolation: isolate; width: 100%; aspect-ratio: 88 / 107; color-scheme: only light;
   background-color: var(--object-polaroid-paper);
-  background-image: linear-gradient(var(--object-polaroid-wash), var(--object-polaroid-wash)), var(--page-background);
-  background-size: cover; border: 1px solid var(--object-polaroid-border);
+  border: 1px solid var(--object-polaroid-border);
   box-shadow: var(--object-polaroid-shadow); color: var(--object-polaroid-ink); transform: rotate(-3deg);
+}
+.polaroid-print::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--page-background) center / cover; opacity: .1; mix-blend-mode: multiply;
 }
 .polaroid-photo { position: absolute; top: 4.2056%; left: 5.1136%; width: 89.7727%; aspect-ratio: 1; overflow: hidden; background: var(--object-polaroid-film); }
 .polaroid-photo::after { content: ""; position: absolute; inset: 0; background: var(--object-polaroid-sheen); pointer-events: none; }
