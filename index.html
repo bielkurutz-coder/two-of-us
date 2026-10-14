@@ -9,10 +9,10 @@
   <meta name="description" content="Uma experiência interativa de álbum em CD.">
   <title>Two Of Us — álbum interativo</title>
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=20261014-v09">
+  <link rel="stylesheet" href="css/style.css?v=20261014-v10">
   <script defer src="js/data.js?v=20261014-v09"></script>
   <script defer src="js/player.js?v=20261014-v08"></script>
-  <script defer src="js/booklet.js?v=20261014-v08-scroll"></script>
+  <script defer src="js/booklet.js?v=20261014-v10"></script>
   <script defer src="js/app.js?v=20261014-v09"></script>
 </head>
 <body class="headphones-pending">
@@ -100,6 +100,7 @@
       <div class="book-shell" id="book-shell">
         <div class="page-underlay"></div>
         <article class="book-page" id="book-page" tabindex="-1"></article>
+        <div class="page-turn-shadow" id="page-turn-shadow" aria-hidden="true" hidden></div>
         <div class="turning-leaf" id="turning-leaf" aria-hidden="true" hidden></div>
         <div class="reader-cover" id="reader-cover"><img id="reader-cover-art" alt="" draggable="false"></div>
       </div>
