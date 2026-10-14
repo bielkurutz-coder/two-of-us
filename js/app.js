@@ -55,11 +55,68 @@
     polaroidNotes.append(line);
   });
   const polaroidPhoto = document.querySelector("#polaroid-photo");
-  if (data.polaroid.photo) {
-    polaroidPhoto.addEventListener("load", () => { polaroidPhoto.hidden = false; });
-    polaroidPhoto.addEventListener("error", () => { polaroidPhoto.hidden = true; });
+  polaroidPhoto.alt = data.polaroid.photoAlt || "";
+  polaroidPhoto.decoding = "async";
+  let polaroidPhotoRequested = false;
+  let polaroidPhotoReady = false;
+  let polaroidPhotoOpened = false;
+  let polaroidPhotoSettled = false;
+  let polaroidPhotoDevelop = false;
+  let polaroidPhotoTimer;
+
+  function revealPolaroidPhoto() {
+    if (!polaroidPhotoReady || !polaroidPhotoSettled || !polaroidDialog.open || polaroidClosing) return;
+    polaroidPhoto.classList.toggle("is-photo-developing", polaroidPhotoDevelop && !polaroidMotion.matches);
+    polaroidPhoto.classList.add("is-photo-visible");
+  }
+
+  function failPolaroidPhoto() {
+    polaroidPhotoReady = false;
+    polaroidPhoto.hidden = true;
+    polaroidPhoto.classList.remove("is-photo-visible", "is-photo-developing");
+  }
+
+  /* Assign src only when the case opens; the hidden dialog still preloads it. */
+  function preloadPolaroidPhoto() {
+    if (!data.polaroid.photo || polaroidPhotoRequested) return;
+    polaroidPhotoRequested = true;
     polaroidPhoto.src = data.polaroid.photo;
   }
+  polaroidPhoto.addEventListener("load", async () => {
+    try {
+      await polaroidPhoto.decode();
+      polaroidPhotoReady = true;
+      polaroidPhoto.hidden = false;
+      revealPolaroidPhoto();
+    } catch { failPolaroidPhoto(); }
+  });
+  polaroidPhoto.addEventListener("error", failPolaroidPhoto);
+  polaroidPhoto.addEventListener("animationend", event => {
+    if (event.animationName === "polaroid-develop") polaroidPhoto.classList.remove("is-photo-developing");
+  });
+
+  function preparePolaroidPhoto() {
+    clearTimeout(polaroidPhotoTimer);
+    polaroidPhotoDevelop = !polaroidPhotoOpened && !polaroidMotion.matches;
+    polaroidPhotoOpened = true;
+    polaroidPhotoSettled = !polaroidPhotoDevelop;
+    polaroidPhoto.classList.remove("is-photo-visible", "is-photo-developing");
+    if (polaroidPhotoSettled) revealPolaroidPhoto();
+    else {
+      /* Match the existing 560 ms print entrance before developing the film. */
+      polaroidPhotoTimer = setTimeout(() => {
+        polaroidPhotoSettled = true;
+        revealPolaroidPhoto();
+      }, 560);
+    }
+  }
+  polaroidMotion.addEventListener("change", () => {
+    if (!polaroidMotion.matches) return;
+    clearTimeout(polaroidPhotoTimer);
+    polaroidPhotoDevelop = false;
+    polaroidPhotoSettled = true;
+    revealPolaroidPhoto();
+  });
 
   function clearPolaroidHistoryMarker() {
     const state = { ...history.state };
@@ -79,6 +136,8 @@
   function closePolaroid(fromHistory = false) {
     if (!polaroidDialog.open || polaroidClosing) return;
     polaroidClosing = true;
+    clearTimeout(polaroidPhotoTimer);
+    polaroidPhotoSettled = false;
     const printStyle = getComputedStyle(polaroidDialog.querySelector(".polaroid-print"));
     polaroidStage.style.setProperty("--polaroid-close-transform", printStyle.transform);
     polaroidStage.style.setProperty("--polaroid-close-opacity", printStyle.opacity);
@@ -93,6 +152,7 @@
   polaroidTrigger.addEventListener("click", () => {
     if (!headphonesAccepted || caseBusy || !experience.classList.contains("is-open") || polaroidDialog.open || polaroidClosing || polaroidBackPending) return;
     polaroidDialog.showModal();
+    preparePolaroidPhoto();
     const logo = polaroidTrigger.getBoundingClientRect();
     const target = polaroidStage.getBoundingClientRect();
     /* Keep the upward entrance near the logo and inside narrow viewports. */
@@ -117,6 +177,9 @@
   });
   polaroidDialog.addEventListener("close", () => {
     clearTimeout(polaroidCloseTimer);
+    clearTimeout(polaroidPhotoTimer);
+    polaroidPhotoSettled = false;
+    polaroidPhoto.classList.remove("is-photo-developing");
     releasePolaroidHistory();
     polaroidDialog.classList.remove("is-closing");
     polaroidClosing = false;
@@ -151,6 +214,7 @@
   function setCase(open) {
     if (caseBusy) return;
     caseBusy = true;
+    if (open) preloadPolaroidPhoto();
     if (!open) { discPlayer.pause(); bonusPlayer.pause(); }
     listeningPanel.hidden = !open;
     experience.classList.toggle("is-open", open);

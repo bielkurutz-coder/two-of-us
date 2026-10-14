@@ -12,7 +12,8 @@ window.ALBUM_DATA = {
     bonusArtwork: "assets/img/bonus-art.jpg"
   },
   polaroid: {
-    photo: null,
+    photo: "assets/img/polaroid-photo.jpg",
+    photoAlt: "Foto no polaroid",
     notes: [
       "Gravado em: maio a setembro de 2026",
       "Lançado em: 13 de outubro de 2026",
