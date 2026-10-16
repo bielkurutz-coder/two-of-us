@@ -39,20 +39,33 @@
     }, delay);
   });
   document.title = `${data.title} — álbum interativo`;
-  document.querySelector("#album-subtitle").textContent = data.subtitle;
+  const albumSubtitle = document.querySelector("#album-subtitle");
+  const albumHeading = document.querySelector(".album-heading");
+  albumSubtitle.textContent = data.subtitle;
   const imageBindings = { "album-logo": "logo", "cover-art": "cover", "booklet-art": "cover", "reader-cover-art": "cover", "disc-art": "disc", "back-inlay": "backInlay" };
   Object.entries(imageBindings).forEach(([id, key]) => { document.getElementById(id).src = data.images[key]; });
   const jewelCase = document.querySelector("#jewel-case");
   function sizeOpenCase() {
     const size = parseFloat(getComputedStyle(jewelCase).width);
-    const shadow = parseFloat(getComputedStyle(experience).getPropertyValue("--case-shadow-outset"));
+    const style = getComputedStyle(experience);
+    const shadow = parseFloat(style.getPropertyValue("--case-shadow-outset"));
     /* Two squares plus their outer shadows, with 12px of clear space per side.
        A numeric ratio also works on browsers without CSS length division. */
-    const scale = (experience.clientWidth - 24) / (2 * (size + shadow));
-    experience.style.setProperty("--case-open-scale", Math.max(.1, scale));
+    const scale = Math.max(.1, (experience.clientWidth - 24) / (2 * (size + shadow)));
+    experience.style.setProperty("--case-open-scale", scale);
+    /* Use the open target geometry, not the animated/closed case bounds.
+       The shared percentage also follows the short-screen media query. */
+    const caseTop = experience.getBoundingClientRect().top
+      + experience.clientHeight * parseFloat(style.getPropertyValue("--case-open-top")) / 100
+      - size * scale / 2;
+    const logoBottom = polaroidTrigger.getBoundingClientRect().bottom;
+    const subtitleCenter = Math.min((logoBottom + caseTop) / 2,
+      caseTop - 16 - albumSubtitle.getBoundingClientRect().height / 2);
+    albumSubtitle.style.top = `${subtitleCenter - albumHeading.getBoundingClientRect().top}px`;
   }
   sizeOpenCase();
-  new ResizeObserver(sizeOpenCase).observe(experience);
+  const albumLayout = new ResizeObserver(sizeOpenCase);
+  [experience, polaroidTrigger, albumSubtitle].forEach(node => albumLayout.observe(node));
   /* Resolve against the document so CSS variables also work from a repo subpath. */
   const pageBackground = new URL(data.images.pageBackground, document.baseURI).href;
   document.documentElement.style.setProperty("--page-background", `url(${JSON.stringify(pageBackground)})`);

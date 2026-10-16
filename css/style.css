@@ -184,6 +184,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .album-logo { height: clamp(70px, 12vh, 100px); height: clamp(70px, 12svh, 100px); width: auto; object-fit: contain; }
 #polaroid-trigger { display: block; width: max-content; max-width: 100%; min-width: 44px; min-height: 44px; border: 0; padding: 0; margin: 0; border-radius: 0; background: transparent; line-height: 0; }
 .album-heading p { font-size: 10px; letter-spacing: 1px; color: var(--subtitle-text); opacity: var(--subtitle-opacity); }
+#album-subtitle { position: absolute; left: 0; right: 0; margin: 0; transform: translateY(-50%); text-align: center; text-wrap: balance; }
 .open-only { opacity: 0; visibility: hidden; transition: opacity .6s .7s, visibility .6s .7s; }
 .is-open .open-only { opacity: 1; visibility: visible; }
 .case-stage { position: absolute; inset: 0; perspective: 1400px; pointer-events: none; }
