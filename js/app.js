@@ -16,6 +16,7 @@
   let polaroidBackPending = false;
   let polaroidCloseTimer;
   let polaroidBackdropStart = false;
+  let polaroidOpenedAt = 0;
   let booklet;
   let lastAnnouncement = "";
   let caseBusy = false;
@@ -24,10 +25,11 @@
   let headphonesAccepted = false;
   /* Register the first user gesture before playback controls become reachable.
      Actual audio.play() calls stay inside the existing, later playback taps. */
-  headphonesContinue.addEventListener("click", () => {
+  headphonesContinue.addEventListener("click", async () => {
     if (headphonesAccepted) return;
     headphonesAccepted = true;
     headphonesContinue.disabled = true;
+    await caseReady;
     headphonesGate.classList.add("is-dismissed");
     document.body.classList.remove("headphones-pending");
     const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 400;
@@ -42,8 +44,12 @@
   const albumSubtitle = document.querySelector("#album-subtitle");
   const albumHeading = document.querySelector(".album-heading");
   albumSubtitle.textContent = data.subtitle;
-  const imageBindings = { "album-logo": "logo", "cover-art": "cover", "booklet-art": "cover", "reader-cover-art": "cover", "disc-art": "disc", "back-inlay": "backInlay" };
+  const imageBindings = { "album-logo": "logo", "cover-art": "cover", "booklet-art": "cover", "reader-cover-art": "cover", "disc-art": "disc" };
   Object.entries(imageBindings).forEach(([id, key]) => { document.getElementById(id).src = data.images[key]; });
+  /* Decode while the notice is visible; no audio is requested here. A failed
+     asset must not trap the visitor on the notice or reject an event handler. */
+  window.albumFontsReady = Promise.allSettled([400, 600, 700].map(weight => document.fonts.load(`${weight} 17px Caveat`)));
+  const caseReady = Promise.allSettled([...Object.keys(imageBindings).map(id => document.getElementById(id).decode()), window.albumFontsReady]);
   const jewelCase = document.querySelector("#jewel-case");
   function sizeOpenCase() {
     const size = parseFloat(getComputedStyle(jewelCase).width);
@@ -69,6 +75,9 @@
   /* Resolve against the document so CSS variables also work from a repo subpath. */
   const pageBackground = new URL(data.images.pageBackground, document.baseURI).href;
   document.documentElement.style.setProperty("--page-background", `url(${JSON.stringify(pageBackground)})`);
+  const pagePaper = new Image();
+  pagePaper.src = pageBackground;
+  window.albumPaperReady = pagePaper.decode().catch(() => {});
 
   /* The keepsake is independent of both audio players and the booklet. */
   const polaroidNotes = document.querySelector("#polaroid-notes");
@@ -175,6 +184,7 @@
 
   polaroidTrigger.addEventListener("click", () => {
     if (!headphonesAccepted || caseBusy || !experience.classList.contains("is-open") || polaroidDialog.open || polaroidClosing || polaroidBackPending) return;
+    polaroidOpenedAt = performance.now();
     polaroidDialog.showModal();
     preparePolaroidPhoto();
     const logo = polaroidTrigger.getBoundingClientRect();
@@ -189,7 +199,8 @@
   });
   document.querySelector("#polaroid-close").addEventListener("click", () => closePolaroid());
   polaroidDialog.addEventListener("pointerdown", event => {
-    polaroidBackdropStart = event.target === polaroidDialog;
+    /* A second tap on the logo lands on the newly opened backdrop. */
+    polaroidBackdropStart = event.target === polaroidDialog && performance.now() - polaroidOpenedAt >= (polaroidMotion.matches ? 150 : 560);
   });
   polaroidDialog.addEventListener("click", event => {
     if (polaroidBackdropStart && event.target === polaroidDialog) closePolaroid();
@@ -275,7 +286,7 @@
     if (!player.loaded) return;
     const state = player.error ? "ÁUDIO INDISPONÍVEL" : player.pending ? "PREPARANDO O SOM" : player.isPlaying ? "O DISCO ESTÁ GIRANDO" : player.finished ? "FIM DO ÁLBUM" : "EM PAUSA";
     document.querySelector("#disc-time").textContent = `${window.formatTime(player.audio.currentTime)} / ${window.formatTime(player.duration)}`;
-    document.querySelector("#disc-progress-fill").style.width = `${player.duration ? Math.min(100, player.audio.currentTime / player.duration * 100) : 0}%`;
+    document.querySelector("#disc-progress-fill").style.transform = `scaleX(${player.duration ? Math.min(1, player.audio.currentTime / player.duration) : 0})`;
     const announcement = `${state}. ${player.track?.title || ""}.`;
     if (announcement !== lastAnnouncement) { announcer.textContent = announcement; lastAnnouncement = announcement; }
   });
@@ -288,7 +299,7 @@
     if (caseBusy) return;
     caseBusy = true;
     if (open) preloadPolaroidPhoto();
-    if (!open) { cancelDiscGesture(); discPlayer.pause(); bonusPlayer.pause(); }
+    if (!open) { cancelDiscGesture(); booklet.close(); discPlayer.pause(); bonusPlayer.pause(); }
     listeningPanel.hidden = !open;
     experience.classList.toggle("is-open", open);
     document.querySelector(".album-heading").setAttribute("aria-hidden", String(!open));
@@ -409,10 +420,26 @@
   });
   window.addEventListener("blur", cancelDiscGesture);
   window.addEventListener("resize", cancelDiscGesture);
-  bookletButton.addEventListener("click", () => {
+  const openBooklet = () => {
     if (caseBusy) return;
     experience.classList.add("hints-dismissed");
     booklet.open();
+  };
+  bookletButton.addEventListener("click", openBooklet);
+  /* Some touch engines suppress the compatibility click after a disc flick.
+     A stationary touch release is still a tap; open() deduplicates clicks. */
+  let bookletTouch;
+  bookletButton.addEventListener("pointerdown", event => {
+    bookletTouch = event.isPrimary && event.pointerType === "touch" ? { id: event.pointerId, x: event.clientX, y: event.clientY } : null;
+  });
+  bookletButton.addEventListener("pointercancel", () => { bookletTouch = null; });
+  bookletButton.addEventListener("pointermove", event => {
+    if (bookletTouch && Math.hypot(event.clientX - bookletTouch.x, event.clientY - bookletTouch.y) >= 8) bookletTouch = null;
+  });
+  bookletButton.addEventListener("pointerup", event => {
+    const start = bookletTouch;
+    bookletTouch = null;
+    if (start?.id === event.pointerId && Math.hypot(event.clientX - start.x, event.clientY - start.y) < 8) openBooklet();
   });
   /* Pause when navigating away; no persisted or automatic playback on a later visit. */
   window.addEventListener("pagehide", () => { discPlayer.pause(); bonusPlayer.pause(); });

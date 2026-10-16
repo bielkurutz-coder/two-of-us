@@ -13,6 +13,7 @@
       this.pages = [...data.booklet.pages.filter(page => page.enabled !== false), { ...data.booklet.bonusPage, type: "bonus" }];
       this.index = 0;
       this.busy = false;
+      this.openRequest = 0;
       this.closing = false;
       this.dialog = document.querySelector("#booklet-dialog");
       this.shell = document.querySelector("#book-shell");
@@ -26,6 +27,8 @@
       this.trigger = document.querySelector("#booklet-trigger");
       this.experience = document.querySelector("#experience");
       this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      this.cassette = new Image();
+      this.cassetteReady = null;
       this.historyOwned = false;
       /* A reload must still start at the headphones notice, not inside a modal. */
       if (history.state?.twoOfUsBooklet) {
@@ -72,9 +75,21 @@
       document.addEventListener("visibilitychange", () => { if (document.hidden) settle(); });
       this.reducedMotion.addEventListener("change", settle);
     }
-    open() {
+    prepareCassette() {
+      if (!this.cassetteReady) {
+        this.cassette.src = document.querySelector("#bonus-player-template").content.querySelector(".bonus-cassette-body").getAttribute("src");
+        this.cassetteReady = this.cassette.decode().catch(() => {});
+      }
+      return this.cassetteReady;
+    }
+    async open() {
       if (this.busy || this.dialog.open) return;
       this.busy = true;
+      const request = ++this.openRequest;
+      this.prepareCassette();
+      await Promise.all([window.albumFontsReady, window.albumPaperReady]);
+      if (request !== this.openRequest) return;
+      if (!this.experience.classList.contains("is-open")) { this.busy = false; return; }
       this.origin = this.trigger.getBoundingClientRect();
       this.experience.classList.add("is-extracting");
       this.openTimer = setTimeout(() => {
@@ -100,7 +115,14 @@
       }, this.reducedMotion.matches ? 0 : 300);
     }
     close(fromHistory = false) {
-      if (!this.dialog.open || this.closing) return;
+      ++this.openRequest;
+      clearTimeout(this.openTimer);
+      if (!this.dialog.open) {
+        this.busy = false;
+        this.experience.classList.remove("is-extracting");
+        return;
+      }
+      if (this.closing) return;
       this.closing = true;
       if (!fromHistory && this.historyOwned && history.state?.twoOfUsBooklet) history.back();
       this.historyOwned = false;
@@ -233,6 +255,8 @@
         this.shadow.hidden = false;
         const count = 6;
         const stripWidth = width / count;
+        const strips = document.createDocumentFragment();
+        const scrollCopies = [];
         for (let i = 0; i < count; i++) {
           const strip = element("div", "leaf-strip");
           strip.style.width = `${stripWidth + .4}px`;
@@ -249,10 +273,14 @@
           front.append(frontCopy, shades[0], highlights[0]);
           back.append(reverse, shades[1], highlights[1]);
           strip.append(front, back);
-          this.leaf.append(strip);
-          frontCopy.scrollTop = backCopy.scrollTop = direction > 0 ? scrollTop : 0;
+          strips.append(strip);
+          scrollCopies.push(frontCopy, backCopy);
           state.strips.push({ strip, shades, highlights });
         }
+        /* Attach the whole leaf before scrolling its copies: interleaving
+           insertion and scrollTop forced a full layout for every strip. */
+        this.leaf.append(strips);
+        scrollCopies.forEach(copy => { copy.scrollTop = direction > 0 ? scrollTop : 0; });
       }
       this.paintTurn(0);
       return true;
@@ -284,8 +312,8 @@
         strip.firstChild.style.opacity = String(Math.cos(radians) >= 0 ? opacity : 0);
         strip.lastChild.style.opacity = String(Math.cos(radians) < 0 ? opacity : 0);
         const shade = Math.abs(Math.sin(radians));
-        shades.forEach(node => { node.style.opacity = String(shade * .78); });
-        highlights.forEach(node => { node.style.opacity = String(i === state.strips.length - 1 ? lift * .6 : 0); });
+        shades[Math.cos(radians) >= 0 ? 0 : 1].style.opacity = String(shade * .78);
+        if (i === state.strips.length - 1) highlights.forEach(node => { node.style.opacity = String(lift * .6); });
         x += stripWidth * Math.cos(radians);
         z -= stripWidth * Math.sin(radians);
       });
@@ -325,7 +353,9 @@
       if (complete) {
         if (this.pages[this.index].type === "bonus") this.player.pause();
         this.index = state.target;
-        this.render();
+        /* Forward turns already rendered the destination underneath the leaf.
+           Keep that decoded image and its controls instead of rebuilding it. */
+        this.render(Boolean(state.previousContent));
       } else if (state.previousContent) {
         this.page.replaceChildren(state.previousContent);
         this.page.scrollTop = state.scrollTop;
@@ -381,8 +411,9 @@
       } else if (definition.type === "bonus") {
         fragment.append(element("p", "page-copy", this.data.bonusTrack.description));
         const player = document.querySelector("#bonus-player-template").content.cloneNode(true);
-        const artwork = player.querySelector(".bonus-art");
-        if (artwork) artwork.src = this.data.images.bonusArtwork;
+        const cassette = player.querySelector(".bonus-cassette");
+        const image = player.querySelector(".bonus-cassette-body");
+        this.prepareCassette().then(() => image.decode()).then(() => cassette.classList.add("is-ready")).catch(() => {});
         player.querySelector(".bonus-title").textContent = this.data.bonusTrack.title;
         player.querySelector(".bonus-artist").textContent = this.data.bonusTrack.artist;
         player.querySelector(".bonus-toggle").addEventListener("click", () => this.player.toggle());
@@ -397,13 +428,16 @@
       fragment.append(element("p", "page-mark", String(index + 1).padStart(2, "0")));
       page.replaceChildren(fragment);
     }
-    render() {
-      this.renderPage(this.page, this.index);
+    render(keepContent = false) {
+      if (!keepContent) this.renderPage(this.page, this.index);
       this.dialog.classList.toggle("is-bonus-page", this.pages[this.index].type === "bonus");
       this.page.scrollTop = 0;
       this.previous.disabled = this.index === 0;
       this.next.disabled = this.index === this.pages.length - 1;
       this.counter.textContent = `${String(this.index + 1).padStart(2, "0")} / ${String(this.pages.length).padStart(2, "0")}`;
+      /* Keep focus in the modal when the focused arrow becomes unavailable. */
+      if (this.dialog.open && (document.activeElement === this.previous || document.activeElement === this.next)
+          && (document.activeElement.disabled || this.pages[this.index].type === "bonus")) this.page.focus({ preventScroll: true });
       this.updatePlayer();
     }
     updatePlayer() {

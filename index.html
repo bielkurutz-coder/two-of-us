@@ -6,14 +6,17 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#e5dbc3" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#252a20" media="(prefers-color-scheme: dark)">
+  <style>html { background: #f6e7c8; color-scheme: light dark; } @media (prefers-color-scheme: dark) { html { background: #252a20; } }</style>
   <meta name="description" content="Uma experiência interativa de álbum em CD.">
   <title>Two Of Us — álbum interativo</title>
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=20261014-v10">
-  <script defer src="js/data.js?v=20261014-v09"></script>
-  <script defer src="js/player.js?v=20261014-v08"></script>
-  <script defer src="js/booklet.js?v=20261014-v10"></script>
-  <script defer src="js/app.js?v=20261014-v09"></script>
+  <!-- Bump this shared release token for the stylesheet and all four scripts. -->
+  <link rel="stylesheet" href="css/style.css?v=20261016-polish-1">
+  <link rel="preload" href="assets/img/cover-front.webp" as="image" fetchpriority="low">
+  <script defer src="js/data.js?v=20261016-polish-1"></script>
+  <script defer src="js/player.js?v=20261016-polish-1"></script>
+  <script defer src="js/booklet.js?v=20261016-polish-1"></script>
+  <script defer src="js/app.js?v=20261016-polish-1"></script>
 </head>
 <body class="headphones-pending">
   <section id="headphones-gate" class="headphones-gate" aria-labelledby="headphones-title" aria-describedby="headphones-copy">
@@ -33,29 +36,28 @@
   <main class="experience" id="experience" inert aria-hidden="true">
     <header class="album-heading open-only" aria-hidden="true">
       <div class="eyebrow"><span>VOL. 01</span></div>
-      <h1 id="album-title"><button id="polaroid-trigger" type="button" aria-label="Ver detalhes do disco" aria-haspopup="dialog" aria-controls="polaroid-dialog" tabindex="-1" disabled><img id="album-logo" class="album-logo" alt="Two Of Us" draggable="false"></button></h1>
+      <h1 id="album-title"><button id="polaroid-trigger" type="button" aria-label="Ver detalhes do disco" aria-haspopup="dialog" aria-controls="polaroid-dialog" tabindex="-1" disabled><img width="1352" height="1163" id="album-logo" class="album-logo" alt="Two Of Us" draggable="false"></button></h1>
       <p id="album-subtitle"></p>
     </header>
 
     <section class="case-stage" aria-label="Estojo do álbum">
       <div class="jewel-case" id="jewel-case">
         <div class="case-base">
-          <img class="back-inlay" id="back-inlay" alt="Encarte traseiro provisório" draggable="false">
           <div class="tray-groove"></div>
           <button class="disc" id="disc" type="button" tabindex="-1" aria-hidden="true" aria-label="Reproduzir álbum" aria-pressed="false">
-            <span class="disc-rotation" id="disc-rotation"><img id="disc-art" alt="" draggable="false"></span>
+            <span class="disc-rotation" id="disc-rotation"><img width="701" height="701" id="disc-art" alt="" draggable="false"></span>
             <span class="disc-sheen"></span><span class="disc-hole"></span>
           </button>
           <span class="tray-hub"></span>
         </div>
         <div class="case-lid" id="case-lid">
           <div class="lid-face lid-front">
-            <img id="cover-art" alt="Capa do álbum Two Of Us" draggable="false">
+            <img width="1560" height="1580" id="cover-art" alt="Capa do álbum Two Of Us" draggable="false">
             <span class="plastic-shine"></span>
           </div>
           <div class="lid-face lid-inner">
             <button class="booklet-in-case" id="booklet-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Retirar e abrir o livreto">
-              <img id="booklet-art" alt="" draggable="false">
+              <img width="1560" height="1580" id="booklet-art" alt="" draggable="false">
               <span class="booklet-edge"></span>
             </button>
             <span class="case-clip clip-top"></span><span class="case-clip clip-bottom"></span>
@@ -87,7 +89,7 @@
   <dialog id="polaroid-dialog" class="polaroid-dialog" aria-label="Detalhes do disco" aria-describedby="polaroid-notes">
     <div class="polaroid-stage">
       <div class="polaroid-print">
-        <div class="polaroid-photo"><img id="polaroid-photo" alt="Fotografia do disco" draggable="false" hidden></div>
+        <div class="polaroid-photo"><img width="900" height="900" id="polaroid-photo" alt="Fotografia do disco" draggable="false" hidden></div>
         <div class="polaroid-notes" id="polaroid-notes"></div>
       </div>
       <button id="polaroid-close" class="polaroid-close" type="button" aria-label="Fechar detalhes do disco" autofocus>×</button>
@@ -102,7 +104,7 @@
         <article class="book-page" id="book-page" tabindex="-1"></article>
         <div class="page-turn-shadow" id="page-turn-shadow" aria-hidden="true" hidden></div>
         <div class="turning-leaf" id="turning-leaf" aria-hidden="true" hidden></div>
-        <div class="reader-cover" id="reader-cover"><img id="reader-cover-art" alt="" draggable="false"></div>
+        <div class="reader-cover" id="reader-cover"><img width="1560" height="1580" id="reader-cover-art" alt="" draggable="false"></div>
       </div>
       <nav class="page-navigation" aria-label="Navegação do livreto">
         <button class="icon-button" id="page-prev" type="button" aria-label="Página anterior">←</button>
@@ -116,7 +118,7 @@
   <template id="bonus-player-template">
     <section class="bonus-player" aria-label="Player da faixa extra">
       <div class="bonus-cassette">
-        <img class="bonus-cassette-body" src="assets/img/cassette.png" alt="" draggable="false" width="1536" height="1024">
+        <img class="bonus-cassette-body" src="assets/img/cassette.webp" alt="" draggable="false" width="936" height="624">
         <div class="bonus-identity"><h3 class="bonus-title"></h3><p class="bonus-artist"></p></div>
         <svg class="bonus-reel bonus-reel-left" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
           <circle class="bonus-reel-rim" cx="50" cy="50" r="46"/>

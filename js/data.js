@@ -4,12 +4,10 @@ window.ALBUM_DATA = {
   artist: "Nome do artista",
   subtitle: "Nosso primeiro disco, de muitos · Gravado entre maio e setembro de 2026",
   images: {
-    logo: "assets/img/logo-two-of-us.png",
-    cover: "assets/img/cover-front.jpg",
-    disc: "assets/img/disc-label.jpg",
-    pageBackground: "assets/img/page-paper.png",
-    backInlay: "assets/img/back-inlay.png",
-    bonusArtwork: "assets/img/bonus-art.jpg"
+    logo: "assets/img/logo-two-of-us.webp",
+    cover: "assets/img/cover-front.webp",
+    disc: "assets/img/disc-label.webp",
+    pageBackground: "assets/img/page-paper.webp"
   },
   polaroid: {
     photo: "assets/img/polaroid-photo.jpg",
