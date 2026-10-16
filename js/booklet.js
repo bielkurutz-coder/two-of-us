@@ -448,8 +448,8 @@
       toggle.classList.toggle("is-playing", player.isPlaying);
       panel.classList.toggle("is-playing", player.isPlaying);
       toggle.setAttribute("aria-pressed", String(player.isPlaying));
-      toggle.setAttribute("aria-label", player.isPlaying ? "Pausar faixa extra" : "Reproduzir faixa extra");
-      toggle.setAttribute("aria-busy", String(player.pending));
+      toggle.setAttribute("aria-label", player.isPlaying || player.pending || player.buffering ? "Pausar faixa extra" : "Reproduzir faixa extra");
+      toggle.setAttribute("aria-busy", String(player.pending || player.buffering));
       const seek = panel.querySelector(".bonus-seek");
       seek.disabled = !player.canSeek;
       seek.max = player.duration || 1;

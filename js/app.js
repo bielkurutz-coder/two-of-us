@@ -279,12 +279,12 @@
     syncDiscMotion(player);
     discButton.classList.toggle("is-playing", player.isPlaying);
     discButton.setAttribute("aria-pressed", String(player.isPlaying));
-    discButton.setAttribute("aria-label", player.isPlaying ? "Pausar álbum" : "Reproduzir álbum");
-    discButton.setAttribute("aria-busy", String(player.pending));
+    discButton.setAttribute("aria-label", player.isPlaying || player.pending || player.buffering ? "Pausar álbum" : "Reproduzir álbum");
+    discButton.setAttribute("aria-busy", String(player.pending || player.buffering));
     document.querySelector("#disc-error").textContent = player.error;
     experience.classList.toggle("has-disc-error", Boolean(player.error));
     if (!player.loaded) return;
-    const state = player.error ? "ÁUDIO INDISPONÍVEL" : player.pending ? "PREPARANDO O SOM" : player.isPlaying ? "O DISCO ESTÁ GIRANDO" : player.finished ? "FIM DO ÁLBUM" : "EM PAUSA";
+    const state = player.error ? "ÁUDIO INDISPONÍVEL" : player.pending || player.buffering ? "PREPARANDO O SOM" : player.isPlaying ? "O DISCO ESTÁ GIRANDO" : player.finished ? "FIM DO ÁLBUM" : "EM PAUSA";
     document.querySelector("#disc-time").textContent = `${window.formatTime(player.audio.currentTime)} / ${window.formatTime(player.duration)}`;
     document.querySelector("#disc-progress-fill").style.transform = `scaleX(${player.duration ? Math.min(1, player.audio.currentTime / player.duration) : 0})`;
     const announcement = `${state}. ${player.track?.title || ""}.`;
@@ -394,7 +394,7 @@
       discSpeed = discMotion.matches ? normalDiscSpeed : Math.sign(speed) * Math.min(1080, Math.max(160, Math.abs(speed)));
       /* play() reaches audio.play() synchronously, before its first await.
          Do not defer this user-gesture authorization to an animation frame. */
-      if (!discPlayer.isPlaying) discPlayer.play();
+      if (discPlayer.audio.paused && !discPlayer.pending) discPlayer.play();
     } else {
       discSpeed = normalDiscSpeed;
       if (!gesture.dragging && performance.now() - gesture.time <= 250) discPlayer.toggle();
