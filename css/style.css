@@ -128,6 +128,10 @@
   --object-bonus-seek-moz-range-track-background: #464d3133;
   --object-bonus-times-color: #625a44;
   --case-size: min(78vw, 310px);
+  --case-open-scale: .54;
+  --case-open-top: 46%;
+  /* Widest horizontal shadow: 32px blur minus 10px spread. */
+  --case-shadow-outset: 22px;
   --page-background: none;
   font-family: Arial, Helvetica, sans-serif;
   font-synthesis: none;
@@ -164,6 +168,7 @@ button { -webkit-user-select: none; user-select: none; }
 .headphones-notice p { font-size: 13px; line-height: 1.8; color: var(--notice-copy); margin: 0 auto 32px; max-width: 290px; }
 #headphones-continue { min-height: 48px; min-width: 156px; padding: 13px 24px; border: 1px solid var(--notice-button); border-radius: 3px; background: var(--notice-button); color: var(--notice-button-text); font-size: 13px; letter-spacing: .3px; }
 .experience {
+  --case-open-half: calc(var(--case-size) * var(--case-open-scale));
   position: relative; isolation: isolate; width: min(100%, 480px); height: 100vh; height: 100svh;
   min-height: 0; margin-inline: auto; overflow: hidden;
   background: radial-gradient(ellipse at 46% 38%, var(--surface-center) 0, var(--surface-middle) 52%, var(--surface-edge) 100%);
@@ -187,7 +192,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
   transform: translate(-50%, -50%); transform-style: preserve-3d;
   transition: transform 1.2s cubic-bezier(.25,.65,.2,1), top 1.2s;
 }
-.is-open .jewel-case { top: 46%; transform: translate(-23%, -50%) scale(.54); }
+.is-open .jewel-case { top: var(--case-open-top); transform: translate(calc((var(--case-open-scale) - 1) * 50%), -50%) scale(var(--case-open-scale)); }
 .case-base, .lid-face {
   position: absolute; inset: 0; border: var(--object-case-base-border); border-radius: 5px;
   box-shadow: var(--object-case-frame-box-shadow);
@@ -195,11 +200,10 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .case-base { background: var(--paper); box-shadow: var(--object-case-base-box-shadow); }
 .back-inlay { display: none; position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; opacity: .52; }
 .tray-groove { position: absolute; inset: 13px; border-radius: 50%; border: var(--object-tray-groove-border); box-shadow: var(--object-tray-groove-box-shadow); }
-.disc { position: absolute; z-index: 1; inset: 18px; border: var(--object-disc-border); border-radius: 50%; padding: 0; background: var(--object-disc-background); overflow: hidden; box-shadow: var(--object-disc-box-shadow); pointer-events: none; }
+.disc { position: absolute; z-index: 1; inset: 18px; border: var(--object-disc-border); border-radius: 50%; padding: 0; background: var(--object-disc-background); overflow: hidden; box-shadow: var(--object-disc-box-shadow); pointer-events: none; touch-action: none; }
 .is-open .disc { pointer-events: auto; }
 .disc-rotation, .disc-rotation img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-.disc-rotation { animation: spin 9s linear infinite; animation-play-state: paused; }
-.disc.is-playing .disc-rotation { animation-play-state: running; }
+.disc.is-playing .disc-rotation, .disc.is-dragging .disc-rotation { will-change: transform; }
 .disc-sheen { position: absolute; inset: 0; border-radius: 50%; background: var(--object-disc-sheen-background); box-shadow: var(--object-disc-sheen-box-shadow); mix-blend-mode: screen; pointer-events: none; }
 .disc-hole { position: absolute; inset: 41%; border: var(--object-disc-hole-border); border-radius: 50%; background: var(--object-disc-hole-background); box-shadow: var(--object-disc-hole-box-shadow); }
 .tray-hub { pointer-events: none; position: absolute; inset: 46.5%; border-radius: 50%; background: var(--object-tray-hub-background); z-index: 2; box-shadow: var(--object-tray-hub-box-shadow); }
@@ -220,8 +224,8 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .case-spine { position: absolute; z-index: 5; top: 0; bottom: 0; left: -2px; width: 9px; background: var(--object-case-spine-background); border: var(--object-case-spine-border); pointer-events: none; }
 .case-open-hit { position: absolute; inset: 0; z-index: 6; border: 0; border-radius: 5px; background: transparent; pointer-events: auto; }
 .is-open .case-open-hit { pointer-events: none; visibility: hidden; }
-.listening-panel { position: absolute; top: calc(46% + var(--case-size) * .27 + 24px); left: 30px; right: 30px; padding-top: 132px; }
-.tap-hints { position: absolute; top: -20px; left: 50%; width: calc(var(--case-size) * 1.08); display: grid; grid-template-columns: 1fr 1fr; transform: translateX(-50%); color: var(--tap-hint); opacity: var(--tap-hint-opacity); pointer-events: none; transition: opacity .35s, visibility 0s; }
+.listening-panel { position: absolute; top: calc(var(--case-open-top) + var(--case-open-half) / 2 + 24px); left: 30px; right: 30px; padding-top: 132px; }
+.tap-hints { position: absolute; top: -20px; left: 50%; width: calc(var(--case-open-half) * 2); display: grid; grid-template-columns: 1fr 1fr; transform: translateX(-50%); color: var(--tap-hint); opacity: var(--tap-hint-opacity); pointer-events: none; transition: opacity .35s, visibility 0s; }
 .tap-hint { width: 100%; height: 76px; overflow: visible; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .sketch-echo { stroke-width: .7; opacity: .45; }
 .hints-dismissed .tap-hints { opacity: 0; visibility: hidden; transition-delay: 0s, .35s; }
@@ -375,13 +379,12 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .bonus-times { display: flex; justify-content: space-between; font-size: 9px; color: var(--object-bonus-times-color); font-variant-numeric: tabular-nums; }
 .bonus-error { color: var(--wine); }
 .noscript-message { position: fixed; bottom: 20px; left: 10%; width: 80%; text-align: center; z-index: 60; color: var(--environment-text); background: var(--noscript-surface); padding: 15px; font-size: 13px; }
-@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes book-arrive { from { opacity: .1; transform: translate(var(--origin-x, -70px), var(--origin-y, 20px)) scale(var(--origin-scale, .45)) rotate(-6deg); } to { opacity: 1; transform: none; } }
 @keyframes book-leave { to { opacity: 0; transform: translate(var(--origin-x, -70px), var(--origin-y, 20px)) scale(var(--origin-scale, .45)) rotate(-6deg); } }
 @keyframes cover-open { to { transform: rotateY(-165deg); opacity: 0; } }
 @media (max-height: 730px) and (orientation: portrait) {
   .album-heading { top: 6%; } h1 { margin-top: 23px; margin-bottom: 16px; font-size: clamp(36px, 12vw, 48px); }
-  .listening-panel { top: calc(46% + var(--case-size) * .27 + 18px); padding-top: 107px; }
+  .listening-panel { top: calc(var(--case-open-top) + var(--case-open-half) / 2 + 18px); padding-top: 107px; }
   .reader-layout { padding-top: 10px; padding-bottom: 10px; }.reader-heading { margin-bottom: 10px; }
   .page-navigation { margin-top: 16px; }.reader-hint { margin-top: 10px; }
 }
@@ -391,7 +394,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
-  .disc-rotation { animation: none !important; }
+  .disc.is-playing .disc-rotation, .disc.is-dragging .disc-rotation { will-change: auto; }
   .bonus-reel { animation: none !important; }
 }
 
@@ -432,8 +435,8 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .book-shell { --focus-ring: #a86631; }
 .experience.has-disc-error { min-height: 680px; }
 @media (max-height: 620px) and (orientation: portrait) {
-  .is-open .jewel-case { top: 52%; }
-  .listening-panel { top: calc(52% + var(--case-size) * .27 + 14px); padding-top: 70px; }
+  .experience { --case-open-top: 52%; }
+  .listening-panel { top: calc(var(--case-open-top) + var(--case-open-half) / 2 + 14px); padding-top: 70px; }
 }
 
 @media (max-width: 350px) {
