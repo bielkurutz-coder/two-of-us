@@ -5,14 +5,6 @@
   font-weight: 400 700;
   font-display: swap;
 }
-/* SIL OFL 1.1; the complete license is embedded in the local WOFF2 file. */
-@font-face {
-  font-family: 'Mrs Saint Delafield';
-  src: url('../assets/fonts/mrs-saint-delafield-regular.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
 @property --signature-progress {
   syntax: '<percentage>';
   inherits: true;
@@ -282,7 +274,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .credits-list dt { font-size: 14px; font-weight: 600; color: var(--print-secondary); margin-top: 16px; }
 .credits-list dd { font-size: 17px; margin: 5px 0 0; }
 .signature {
-  font: 400 clamp(32px, 9.5vw, 38px)/1.45 'Mrs Saint Delafield', cursive;
+  font: normal 400 24px/1.45 'Caveat', cursive;
   margin: 30px 0 0; padding: .12em .2em .22em;
   color: var(--object-signature-color); text-align: right; white-space: nowrap;
   transform: rotate(-2deg); transform-origin: right center;
