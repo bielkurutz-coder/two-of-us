@@ -52,7 +52,9 @@ window.ALBUM_DATA = {
     { id: "track-30", title: "The Craving", file: "assets/audio/30-the-craving.mp3", durationHint: 174, artist: "Twenty One Pilots", description: "Uma música sobre pensar se é o suficiente e se vai atender o desejo da outra pessoa." },
     { id: "track-31", title: "Nothing's Gonna Stop Us Now", file: "assets/audio/31-nothings-gonna-stop-us-now.mp3", durationHint: 270, artist: "Starship", description: "Uma música completamente eufórica dos anos 80, sobre um amor que não acaba e não desiste. Sobre um casal resiliente. Dançante." },
     { id: "track-32", title: "cherry flavoured love inside your heart", file: "assets/audio/32-cherry-flavoured-love-inside-your-heart.mp3", durationHint: 269, artist: "wave to earth", description: "Calma, leve, suave. Como se estivesse flutuando no espaço." },
-    { id: "track-33", title: "Make You Mine", file: "assets/audio/33-make-you-mine.mp3", durationHint: 233, artist: "PUBLIC", description: "Senti paixão, calor. Toda vez que escuto, é como se eu fosse transportado pro momento em que peguei sua mão." }
+    { id: "track-33", title: "Make You Mine", file: "assets/audio/33-make-you-mine.mp3", durationHint: 233, artist: "PUBLIC", description: "Senti paixão, calor. Toda vez que escuto, é como se eu fosse transportado pro momento em que peguei sua mão." },
+    { id: "track-34", title: "What's It Gonna Take?", file: "assets/audio/34-whats-it-gonna-take.mp3", durationHint: 170, artist: "thebandfriday", description: "" },
+    { id: "track-35", title: "My Blood", file: "assets/audio/35-my-blood.mp3", durationHint: 235, artist: "twenty one pilots", description: "" }
   ],
   bonusTrack: {
     id: "bonus-track", title: "this is what falling in love feels like", file: "assets/audio/34-this-is-what-falling-in-love-feels-like.mp3", durationHint: 120,
@@ -89,6 +91,7 @@ window.ALBUM_DATA = {
         enabled: false,
         type: "photos", eyebrow: "FRAGMENTOS DO CAMINHO", title: "Entre\ninstantes", photoIds: ["photo-01", "photo-02"], text: "[Texto provisório] Fotos, lembranças e pequenos registros que acompanham as canções."
       },
+      { type: "tracklist", eyebrow: "O DISCO INTEIRO", title: "Faixa por\nfaixa" },
       { type: "note", eyebrow: "UMA ÚLTIMA FALA...", title: "Antes da\nsurpresa", paragraphs: ["Construí esse site com muita dedicação e carinho, me inspirando especialmente na estética do Rubber Soul para algumas coisas. Senti que nossa playlist precisava de mais do que um simples lugar no Spotify, e sim de algo feito pra durar. Espero que você goste."], signature: "Gabriel Henrique K." }
     ],
     bonusPage: { eyebrow: "VOCÊ CHEGOU ATÉ AQUI", title: "Ainda\nhá música." }

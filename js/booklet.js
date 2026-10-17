@@ -385,8 +385,18 @@
           const track = this.data.tracks[position];
           const item = element("li", "track-item");
           const copy = element("div");
-          copy.append(element("h3", "", track.title), element("p", "track-artist", track.artist), element("p", "", track.description));
+          copy.append(element("h3", "", track.title), element("p", "track-artist", track.artist));
+          if (track.description) copy.append(element("p", "", track.description));
           item.append(element("span", "track-number", String(position + 1).padStart(2, "0")), copy);
+          list.append(item);
+        });
+        fragment.append(list);
+      } else if (definition.type === "tracklist") {
+        const list = element("ol", "full-track-list");
+        // Read public tracks at render time so future additions appear, never the bonus track.
+        this.data.tracks.forEach((track, position) => {
+          const item = element("li", "full-track-item");
+          item.append(element("span", "track-number", `${String(position + 1).padStart(2, "0")}. `), element("span", "full-track-title", track.title));
           list.append(item);
         });
         fragment.append(list);
