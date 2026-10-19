@@ -54,7 +54,8 @@ window.ALBUM_DATA = {
     { id: "track-32", title: "cherry flavoured love inside your heart", file: "assets/audio/32-cherry-flavoured-love-inside-your-heart.mp3", durationHint: 269, artist: "wave to earth", description: "Calma, leve, suave. Como se estivesse flutuando no espaço." },
     { id: "track-33", title: "Make You Mine", file: "assets/audio/33-make-you-mine.mp3", durationHint: 233, artist: "PUBLIC", description: "Senti paixão, calor. Toda vez que escuto, é como se eu fosse transportado pro momento em que peguei sua mão." },
     { id: "track-34", title: "What's It Gonna Take?", file: "assets/audio/34-whats-it-gonna-take.mp3", durationHint: 170, artist: "thebandfriday", description: "" },
-    { id: "track-35", title: "My Blood", file: "assets/audio/35-my-blood.mp3", durationHint: 235, artist: "twenty one pilots", description: "" }
+    { id: "track-35", title: "My Blood", file: "assets/audio/35-my-blood.mp3", durationHint: 235, artist: "twenty one pilots", description: "" },
+    { id: "track-36", title: "Let The Light In", file: "assets/audio/36-let-the-light-in.mp3", durationHint: 278, artist: "Lana Del Rey, Father John Misty", description: "" }
   ],
   bonusTrack: {
     id: "bonus-track", title: "this is what falling in love feels like", file: "assets/audio/34-this-is-what-falling-in-love-feels-like.mp3", durationHint: 120,
