@@ -93,7 +93,7 @@ window.ALBUM_DATA = {
         enabled: false,
         type: "photos", eyebrow: "FRAGMENTOS DO CAMINHO", title: "Entre\ninstantes", photoIds: ["photo-01", "photo-02"], text: "[Texto provisório] Fotos, lembranças e pequenos registros que acompanham as canções."
       },
-      { type: "tracklist", eyebrow: "O DISCO INTEIRO", title: "Faixa por\nfaixa" },
+      { type: "tracklist", eyebrow: "O DISCO INTEIRO", title: "Faixa por\nfaixa", text: "Toque em uma faixa para o disco tocar a partir dela." },
       { type: "note", eyebrow: "UMA ÚLTIMA FALA...", title: "Antes da\nsurpresa", paragraphs: ["Construí esse site com muita dedicação e carinho, me inspirando especialmente na estética do Rubber Soul para algumas coisas. Senti que nossa playlist precisava de mais do que um simples lugar no Spotify, e sim de algo feito pra durar. Espero que você goste."], signature: "Gabriel Henrique K." }
     ],
     bonusPage: { eyebrow: "VOCÊ CHEGOU ATÉ AQUI", title: "Ainda\nhá música." }

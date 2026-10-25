@@ -269,8 +269,10 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 12.9
 .track-item p { margin: 0; font-size: 17px; line-height: 1.45; color: var(--object-page-ink); }
 .track-item .track-artist { margin: 0 0 7px; font-size: 14px; line-height: 1.35; font-weight: 600; color: var(--print-secondary); }
 .full-track-list { list-style: none; padding: 0; margin: 0; column-count: 1; column-gap: 14px; font-size: 15px; line-height: 1.25; }
-.full-track-item { display: grid; grid-template-columns: 2.5ch minmax(0, 1fr); gap: 5px; break-inside: avoid; margin: 0 0 5px; }
+.full-track-item { break-inside: avoid; margin: 0 0 5px; }
+.full-track-button { display: inline-grid; grid-template-columns: 2.5ch minmax(0, 1fr); gap: 5px; max-width: 100%; padding: 0; border: 0; background: none; text-align: left; line-height: inherit; }
 .full-track-item .track-number { font-size: inherit; line-height: inherit; }
+.full-track-button.is-current .full-track-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 @media (min-width: 360px) { .full-track-list { column-count: 2; } }
 .page-mark { font-size: 13px; color: var(--print-mark); text-align: right; margin-top: 22px; }
 .photo-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 14px; margin: 28px 0; }
