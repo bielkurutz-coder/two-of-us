@@ -277,6 +277,7 @@
 
   const discPlayer = new window.AlbumPlayer(document.querySelector("#disc-audio"), [...data.tracks, data.bonusTrack], player => {
     syncDiscMotion(player);
+    booklet?.setDiscTrack(player.loaded ? player.index : -1);
     discButton.classList.toggle("is-playing", player.isPlaying);
     discButton.setAttribute("aria-pressed", String(player.isPlaying));
     discButton.setAttribute("aria-label", player.isPlaying || player.pending || player.buffering ? "Pausar álbum" : "Reproduzir álbum");
@@ -294,6 +295,11 @@
   discPlayer.onBeforePlay = () => bonusPlayer.pause();
   bonusPlayer.onBeforePlay = () => discPlayer.pause();
   booklet = new window.AlbumBooklet(data, bonusPlayer);
+  /* Tapping the current track pauses or resumes it; any other starts there. */
+  booklet.onSelectTrack = index => {
+    if (discPlayer.loaded && discPlayer.index === index && !discPlayer.finished) discPlayer.toggle();
+    else { discPlayer.load(index); discPlayer.play(); }
+  };
 
   function setCase(open) {
     if (caseBusy) return;

@@ -10,6 +10,9 @@
     constructor(data, bonusPlayer) {
       this.data = data;
       this.player = bonusPlayer;
+      /* Set by app.js: plays the disc from a public track index. */
+      this.onSelectTrack = () => {};
+      this.discTrack = -1;
       this.pages = [...data.booklet.pages.filter(page => page.enabled !== false), { ...data.booklet.bonusPage, type: "bonus" }];
       this.index = 0;
       this.busy = false;
@@ -145,7 +148,7 @@
       }, this.reducedMotion.matches ? 0 : 350);
     }
     startGesture(event) {
-      if (this.busy || !event.isPrimary || event.button !== 0 || event.target.closest("button, input, a") || performance.now() - (this.lastScrollAt || 0) < 120) return;
+      if (this.busy || !event.isPrimary || event.button !== 0 || event.target.closest("button:not(.full-track-button), input, a") || performance.now() - (this.lastScrollAt || 0) < 120) return;
       this.gesture = null;
       this.gesture = {
         x: event.clientX, y: event.clientY, pointer: event.pointerId,
@@ -198,7 +201,7 @@
         const complete = distance >= gesture.width * .35 || (distance > 28 && velocity > .5);
         if (this.turnState) this.animateTurn(complete);
         else if (complete) this.turn(gesture.direction);
-      } else if (Math.abs(this.page.scrollTop - gesture.scrollTop) <= 2 && Math.abs(dx) < 9 && Math.abs(dy) < 9 && performance.now() - gesture.at < 500) {
+      } else if (!event.target.closest(".full-track-button") && Math.abs(this.page.scrollTop - gesture.scrollTop) <= 2 && Math.abs(dx) < 9 && Math.abs(dy) < 9 && performance.now() - gesture.at < 500) {
         const box = this.page.getBoundingClientRect();
         const position = (event.clientX - box.left) / box.width;
         if (position < .19) this.turn(-1);
@@ -396,9 +399,16 @@
         // Read public tracks at render time so future additions appear, never the bonus track.
         this.data.tracks.forEach((track, position) => {
           const item = element("li", "full-track-item");
-          item.append(element("span", "track-number", `${String(position + 1).padStart(2, "0")}. `), element("span", "full-track-title", track.title));
+          /* Swipes that start on a track still turn the page; a tap plays it. */
+          const button = element("button", "full-track-button");
+          button.type = "button";
+          button.dataset.track = String(position);
+          button.append(element("span", "track-number", `${String(position + 1).padStart(2, "0")}. `), element("span", "full-track-title", track.title));
+          button.addEventListener("click", () => this.onSelectTrack(position));
+          item.append(button);
           list.append(item);
         });
+        this.markDiscTrack(list);
         fragment.append(list);
       } else if (definition.type === "photos") {
         const grid = element("div", "photo-grid");
@@ -449,6 +459,19 @@
       if (this.dialog.open && (document.activeElement === this.previous || document.activeElement === this.next)
           && (document.activeElement.disabled || this.pages[this.index].type === "bonus")) this.page.focus({ preventScroll: true });
       this.updatePlayer();
+    }
+    setDiscTrack(index) {
+      if (index === this.discTrack) return;
+      this.discTrack = index;
+      this.markDiscTrack(this.page);
+    }
+    markDiscTrack(root) {
+      root.querySelectorAll(".full-track-button").forEach(button => {
+        const current = Number(button.dataset.track) === this.discTrack;
+        button.classList.toggle("is-current", current);
+        if (current) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      });
     }
     updatePlayer() {
       const panel = this.page.querySelector(".bonus-player");
