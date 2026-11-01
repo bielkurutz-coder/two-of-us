@@ -83,7 +83,13 @@ window.ALBUM_DATA = {
     { id: "track-61", title: "She's Electric", file: "assets/audio/61-shes-electric.mp3", durationHint: 220, artist: "Oasis", description: "" },
     { id: "track-62", title: "What a Feeling", file: "assets/audio/62-what-a-feeling.mp3", durationHint: 201, artist: "One Direction", description: "" },
     { id: "track-63", title: "The Fool On The Hill", file: "assets/audio/63-the-fool-on-the-hill.mp3", durationHint: 179, artist: "The Beatles", description: "" },
-    { id: "track-64", title: "All My Demons Greeting Me As A Friend", file: "assets/audio/64-all-my-demons-greeting-me-as-a-friend.mp3", durationHint: 222, artist: "AURORA", description: "" }
+    { id: "track-64", title: "All My Demons Greeting Me As A Friend", file: "assets/audio/64-all-my-demons-greeting-me-as-a-friend.mp3", durationHint: 222, artist: "AURORA", description: "" },
+    { id: "track-65", title: "Stop The World I Wanna Get Off With You", file: "assets/audio/65-stop-the-world-i-wanna-get-off-with-you.mp3", durationHint: 191, artist: "Arctic Monkeys", description: "" },
+    { id: "track-66", title: "Somebody To Love", file: "assets/audio/66-somebody-to-love.mp3", durationHint: 297, artist: "Queen", description: "" },
+    { id: "track-67", title: "Open Hearts", file: "assets/audio/67-open-hearts.mp3", durationHint: 209, artist: "The Weeknd", description: "" },
+    { id: "track-68", title: "Electric Love", file: "assets/audio/68-electric-love.mp3", durationHint: 218, artist: "BØRNS", description: "" },
+    { id: "track-69", title: "A Sky Full of Stars", file: "assets/audio/69-a-sky-full-of-stars.mp3", durationHint: 268, artist: "Coldplay", description: "" },
+    { id: "track-70", title: "Come Here", file: "assets/audio/70-come-here.mp3", durationHint: 171, artist: "Kath Bloom", description: "" }
   ],
   bonusTrack: {
     id: "bonus-track", title: "this is what falling in love feels like", file: "assets/audio/34-this-is-what-falling-in-love-feels-like.mp3", durationHint: 120,
