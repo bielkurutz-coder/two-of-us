@@ -11,6 +11,8 @@ window.ALBUM_DATA = {
   },
   polaroid: {
     photo: "assets/img/polaroid-photo.jpg",
+    /* Shown in turn with the main photo, with a slow cross-fade, while the polaroid is open. */
+    extraPhotos: ["assets/img/polaroid-photo-2.jpg"],
     photoAlt: "Foto no polaroid",
     notes: [
       "Gravado em: maio a setembro de 2026",
