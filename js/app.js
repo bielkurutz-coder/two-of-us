@@ -97,10 +97,76 @@
   let polaroidPhotoDevelop = false;
   let polaroidPhotoTimer;
 
+  /* Extra photos sit above the main one and cross-fade in turn while the print is open. */
+  const polaroidHold = 5000;
+  const polaroidFade = 1200;
+  const polaroidExtras = (data.polaroid.extraPhotos || []).map(src => {
+    const image = document.createElement("img");
+    image.className = "polaroid-photo-extra";
+    image.width = 900;
+    image.height = 900;
+    image.alt = "";
+    image.draggable = false;
+    image.decoding = "async";
+    image.setAttribute("aria-hidden", "true");
+    polaroidPhoto.parentElement.append(image);
+    const extra = { image, src, ready: false };
+    image.addEventListener("load", async () => {
+      try {
+        await image.decode();
+        extra.ready = true;
+      } catch { image.remove(); }
+    });
+    image.addEventListener("error", () => image.remove());
+    return extra;
+  });
+  let polaroidSlide = 0;
+  let polaroidCycleTimer;
+  let polaroidSettleTimer;
+
+  function stopPolaroidCycle() {
+    clearTimeout(polaroidCycleTimer);
+    clearTimeout(polaroidSettleTimer);
+  }
+  function resetPolaroidCycle() {
+    stopPolaroidCycle();
+    polaroidSlide = 0;
+    polaroidExtras.forEach(extra => extra.image.classList.remove("is-photo-shown"));
+  }
+  function advancePolaroidCycle() {
+    if (!polaroidDialog.open || polaroidClosing) return;
+    /* Slide 0 is the main photo; slide n is extra n - 1. */
+    const count = polaroidExtras.length + 1;
+    let next = polaroidSlide;
+    for (let step = 1; step < count; step++) {
+      const candidate = (polaroidSlide + step) % count;
+      if (candidate === 0 || polaroidExtras[candidate - 1].ready) { next = candidate; break; }
+    }
+    if (next !== polaroidSlide) {
+      const previous = polaroidSlide ? polaroidExtras[polaroidSlide - 1].image : null;
+      polaroidSlide = next;
+      if (next === 0) previous.classList.remove("is-photo-shown");
+      else {
+        const current = polaroidExtras[next - 1].image;
+        polaroidExtras.forEach(extra => { extra.image.style.zIndex = extra.image === current ? 2 : 1; });
+        current.classList.add("is-photo-shown");
+        /* Drop the covered layer only once the new one is fully opaque. */
+        if (previous) polaroidSettleTimer = setTimeout(() => previous.classList.remove("is-photo-shown"), polaroidFade);
+      }
+    }
+    polaroidCycleTimer = setTimeout(advancePolaroidCycle, polaroidHold + polaroidFade);
+  }
+  function startPolaroidCycle(delay) {
+    stopPolaroidCycle();
+    if (polaroidExtras.length) polaroidCycleTimer = setTimeout(advancePolaroidCycle, delay);
+  }
+
   function revealPolaroidPhoto() {
     if (!polaroidPhotoReady || !polaroidPhotoSettled || !polaroidDialog.open || polaroidClosing) return;
-    polaroidPhoto.classList.toggle("is-photo-developing", polaroidPhotoDevelop && !polaroidMotion.matches);
+    const developing = polaroidPhotoDevelop && !polaroidMotion.matches;
+    polaroidPhoto.classList.toggle("is-photo-developing", developing);
     polaroidPhoto.classList.add("is-photo-visible");
+    if (!polaroidSlide) startPolaroidCycle(polaroidHold + (developing ? 1500 : 0));
   }
 
   function failPolaroidPhoto() {
@@ -114,6 +180,7 @@
     if (!data.polaroid.photo || polaroidPhotoRequested) return;
     polaroidPhotoRequested = true;
     polaroidPhoto.src = data.polaroid.photo;
+    polaroidExtras.forEach(extra => { extra.image.src = extra.src; });
   }
   polaroidPhoto.addEventListener("load", async () => {
     try {
@@ -170,6 +237,7 @@
     if (!polaroidDialog.open || polaroidClosing) return;
     polaroidClosing = true;
     clearTimeout(polaroidPhotoTimer);
+    stopPolaroidCycle();
     polaroidPhotoSettled = false;
     const printStyle = getComputedStyle(polaroidDialog.querySelector(".polaroid-print"));
     polaroidStage.style.setProperty("--polaroid-close-transform", printStyle.transform);
@@ -215,6 +283,8 @@
     clearTimeout(polaroidPhotoTimer);
     polaroidPhotoSettled = false;
     polaroidPhoto.classList.remove("is-photo-developing");
+    /* The dialog is already hidden, so this snaps back without a visible fade. */
+    resetPolaroidCycle();
     releasePolaroidHistory();
     polaroidDialog.classList.remove("is-closing");
     polaroidClosing = false;
