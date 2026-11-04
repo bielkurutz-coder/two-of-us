@@ -6,6 +6,7 @@
   const bookletButton = document.querySelector("#booklet-trigger");
   const openButton = document.querySelector("#case-open");
   const listeningPanel = document.querySelector("#listening-panel");
+  const nowPlaying = document.querySelector("#disc-now-playing");
   const announcer = document.querySelector("#announcer");
   const polaroidTrigger = document.querySelector("#polaroid-trigger");
   const polaroidDialog = document.querySelector("#polaroid-dialog");
@@ -355,6 +356,9 @@
     document.querySelector("#disc-error").textContent = player.error;
     experience.classList.toggle("has-disc-error", Boolean(player.error));
     if (!player.loaded) return;
+    const trackLabel = `${player.track.title} - ${player.track.artist}`;
+    if (nowPlaying.textContent !== trackLabel) nowPlaying.textContent = trackLabel;
+    nowPlaying.hidden = false;
     const state = player.error ? "ÁUDIO INDISPONÍVEL" : player.pending || player.buffering ? "PREPARANDO O SOM" : player.isPlaying ? "O DISCO ESTÁ GIRANDO" : player.finished ? "FIM DO ÁLBUM" : "EM PAUSA";
     document.querySelector("#disc-time").textContent = `${window.formatTime(player.audio.currentTime)} / ${window.formatTime(player.duration)}`;
     document.querySelector("#disc-progress-fill").style.transform = `scaleX(${player.duration ? Math.min(1, player.audio.currentTime / player.duration) : 0})`;
@@ -525,3 +529,4 @@
     if (!document.hidden) { discPlayer.emit(); bonusPlayer.emit(); }
   });
 })();
+

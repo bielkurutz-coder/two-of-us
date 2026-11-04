@@ -11,12 +11,12 @@
   <title>Two Of Us — álbum interativo</title>
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <!-- Bump this shared release token for the stylesheet and all four scripts. -->
-  <link rel="stylesheet" href="css/style.css?v=20261102-polaroid2-1">
+  <link rel="stylesheet" href="css/style.css?v=20261104-now-playing-1">
   <link rel="preload" href="assets/img/cover-front.webp" as="image" fetchpriority="low">
-  <script defer src="js/data.js?v=20261102-polaroid2-1"></script>
-  <script defer src="js/player.js?v=20261102-polaroid2-1"></script>
-  <script defer src="js/booklet.js?v=20261102-polaroid2-1"></script>
-  <script defer src="js/app.js?v=20261102-polaroid2-1"></script>
+  <script defer src="js/data.js?v=20261104-now-playing-1"></script>
+  <script defer src="js/player.js?v=20261104-now-playing-1"></script>
+  <script defer src="js/booklet.js?v=20261104-now-playing-1"></script>
+  <script defer src="js/app.js?v=20261104-now-playing-1"></script>
 </head>
 <body class="headphones-pending">
   <section id="headphones-gate" class="headphones-gate" aria-labelledby="headphones-title" aria-describedby="headphones-copy">
@@ -79,7 +79,10 @@
           <path class="sketch-echo" d="M32 73C43 72 55 63 59 52M62 9L69 20"/>
         </svg>
       </div>
-      <div class="disc-progress" aria-hidden="true"><span id="disc-progress-fill"></span></div>
+      <div class="disc-timeline">
+        <p id="disc-now-playing" class="disc-now-playing" hidden></p>
+        <div class="disc-progress" aria-hidden="true"><span id="disc-progress-fill"></span></div>
+      </div>
       <div class="session-footer"><span id="disc-time">00:00</span><button id="case-close" class="case-close-control" type="button" aria-label="Fechar estojo"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
       <p id="disc-error" class="error-message" role="status"></p>
     </section>
@@ -149,3 +152,4 @@
   <noscript><style>.headphones-gate { display: none; } .headphones-pending .experience { visibility: visible; }</style><p class="noscript-message">Ative o JavaScript para abrir o estojo e explorar o álbum.</p></noscript>
 </body>
 </html>
+
